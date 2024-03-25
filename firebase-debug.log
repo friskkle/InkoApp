@@ -1,0 +1,21 @@
+[debug] [2024-01-15T07:12:19.631Z] ----------------------------------------------------------------------
+[debug] [2024-01-15T07:12:19.632Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\hp\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2024-01-15T07:12:19.633Z] CLI Version:   13.0.3
+[debug] [2024-01-15T07:12:19.633Z] Platform:      win32
+[debug] [2024-01-15T07:12:19.633Z] Node Version:  v18.13.0
+[debug] [2024-01-15T07:12:19.634Z] Time:          Mon Jan 15 2024 15:12:19 GMT+0800 (Singapore Standard Time)
+[debug] [2024-01-15T07:12:19.634Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-01-15T07:12:19.639Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-01-15T07:12:19.640Z] > authorizing via signed-in user (matthewlurin127@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\Documents\BEET\TESIS\mattlingo
+
