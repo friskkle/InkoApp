@@ -82,9 +82,9 @@ function Profile() {
         (err) => console.error(err),
         () => {
             // download url
-            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
                 if (auth.currentUser){
-                  updateProfile(auth.currentUser, {
+                  await updateProfile(auth.currentUser, {
                       photoURL: url
                   })
                 }
@@ -171,8 +171,8 @@ function Profile() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {setShowConfirmationModal(false)}}>Cancel</Button>
-          <Button onClick={handleUpload} autoFocus>Confirm</Button>
+          <Button onClick={() => {setShowConfirmationModal(false)}} sx={{color: 'red'}}>Cancel</Button>
+          <Button onClick={handleUpload} sx={{fontWeight: 'bold'}} autoFocus>Confirm</Button>
         </DialogActions>
       </Dialog>
     </div>

@@ -11,6 +11,8 @@ import {
   getDoc,
   where,
   updateDoc,
+  setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import ZHCards from './ZHCards';
@@ -72,7 +74,7 @@ const MandarinWord: React.FC = () => {
     if (userDoc.exists()) {
       const docData = userDoc.data() as userData;
       setUserInfo(docData);
-      getWords(docData.hsk, docData.zhlast);
+      getWords(docData.hsk, docData.zhlast || '');
     } else {
       console.log("No user data found!");
     }
@@ -82,6 +84,15 @@ const MandarinWord: React.FC = () => {
     if(userInfo){
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
         zhlast: lastIndex
+      })
+      fireWord.forEach(async (word) => {
+        const wordTitle = word.word
+
+        await setDoc(doc(firestore, `users/${userInfo.uid}/ZHwallet`, wordTitle), {
+          word: word.word,
+          mastery: 0,
+          last_studied: serverTimestamp()
+        })
       })
       navigate('/home')
     }

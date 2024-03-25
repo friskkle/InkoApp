@@ -12,6 +12,8 @@ import {
   getDoc,
   where,
   updateDoc,
+  setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import JPCards from "./JPCards";
@@ -32,8 +34,6 @@ interface userData {
   uid: string;
   hsk: number;
   jlpt: number;
-  joindate: FieldValue;
-  new: boolean;
   jwlevel : number;
   zhlast: string;
 }
@@ -98,7 +98,7 @@ const JapaneseWord = (props: any) => {
     if (userDoc.exists()) {
       const docData = userDoc.data() as userData;
       setUserInfo(docData);
-      getWords(docData.jwlevel);
+      getWords(docData.jwlevel || 0);
     } else {
       console.log("No user data found!");
     }
@@ -109,10 +109,19 @@ const JapaneseWord = (props: any) => {
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
         jwlevel: lastIndex
       })
+      fireWord.forEach(async (word) => {
+        const wordTitle = word.word + "(" + word.pronunciation + ")"
+
+        await setDoc(doc(firestore, `users/${userInfo.uid}/JPwallet`, wordTitle), {
+          freq: word.freq,
+          mastery: 0,
+          last_studied: serverTimestamp()
+        })
+      })
       navigate('/home')
     }
     else{
-      console.log("User info not loaded, cannot open quiz")
+      console.error("User info not loaded, cannot open quiz")
     }
   }
 
