@@ -33,23 +33,23 @@ function Post(props: postData) {
 
       <div className="post__options pt-3 border-t-1 border-solid border-gray-200 flex justify-evenly font-medium text-gray-300 cursor-pointer p-4">
         <div className="post__option flex items-center justify-center pl-2 pt-2 flex-1 hover:bg-[#eff2f5] rounded-xl">
-          <ThumbUpIcon className="like2" />
+          <ThumbUpIcon className="like2"/>
           <p className="ml-[10px]">Like</p>
         </div>
 
         <div className="post__option flex items-center justify-center pl-2 pt-2 flex-1 hover:bg-[#eff2f5] rounded-xl">
-          <ChatBubbleOutlineIcon />
+          <ChatBubbleOutlineIcon/>
           <p className="ml-[10px]">Comment</p>
         </div>
 
         <div className="post__option flex items-center justify-center pl-2 pt-2 flex-1 hover:bg-[#eff2f5] rounded-xl">
-          <NearMeIcon />
+          <NearMeIcon/>
           <p className="ml-[10px]">Share</p>
         </div>
 
         <div className="post__option flex items-center justify-center pl-2 pt-2 flex-1 hover:bg-[#eff2f5] rounded-xl">
-          <AccountCircleIcon />
-          <ExpandMoreIcon />
+          <AccountCircleIcon/>
+          <ExpandMoreIcon/>
         </div>
       </div>
     </div>

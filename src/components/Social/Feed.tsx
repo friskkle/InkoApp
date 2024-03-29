@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import NewPost from './NewPost'
-import { Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { Query, Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import Post from './Post';
 
 function Feed() {
   const [ posts, setPosts ] = useState<any>([]);
+  const [update, setUpdate] = useState(1)
   const ref = collection(firestore, "posts")
 
-  const getPosts = async () => {
-    const postQuery = query(ref, orderBy('timestamp', 'desc'));
+  const getPosts = async (postQuery: Query) => {
     const querySnapshot = await getDocs(postQuery);
 
     if(!querySnapshot.empty){
@@ -19,11 +19,17 @@ function Feed() {
 
 	useEffect(() => {
     console.log("fetching new posts...")
-    getPosts()
-	}, [posts]);
+    
+    const postQuery = query(ref, orderBy('timestamp', 'desc'));
+    getPosts(postQuery);
+
+    setInterval(() => {
+      getPosts(postQuery);
+    },5000)
+	}, [update]);
   return (
     <div className='feed flex-1 flex-col justify-center items-center p-10'>
-      <NewPost/>
+      <NewPost setPost={setUpdate} post={update}/>
       {posts.map((post: { id: React.Key | null | undefined; data: { profilePic: string; message: string; timestamp: Timestamp; username: string; }; }) => (
 				<Post
 					key={post.id}

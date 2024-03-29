@@ -11,8 +11,7 @@ import { Avatar } from "@mui/material";
 import WebIcon from '@mui/icons-material/Web';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 
-
-function NewPost() {
+function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, post: number}) {
   const { user } = useContext(Context);
 
   const [input, setInput] = useState("");
@@ -29,6 +28,7 @@ function NewPost() {
 
     // DB stuff
     //resetting the values
+    props.setPost(props.post + 1)
     setInput("");
   };
   return (

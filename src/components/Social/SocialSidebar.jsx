@@ -9,11 +9,9 @@ function SidebarRow( {src, Icon, title} ) {
     return (
         <div className="sidebarRow flex items-center p-[10px] cursor-pointer hover:bg-gray-200 rounded-lg">
             {/* if there's a src, pass in the src prop */}
-        
             {src && <Avatar src={src}  />} 
             
             {/* if an icon is passed, passing component as a prop (capitalised icon)*/}
-
             {Icon && <Icon />}
 
             <h4>{title}</h4>

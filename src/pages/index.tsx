@@ -8,5 +8,6 @@ import JapaneseLearn from './Flashcards/JapaneseLearn';
 import MandarinLearn from './Flashcards/MandarinLearn';
 import Profile from "./Home/Profile";
 import Hub from "./Social/Hub";
+import JPQuiz from "./Flashcards/JapaneseQuiz";
 
-export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub}
+export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz}

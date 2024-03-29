@@ -12,6 +12,7 @@ import Header from "../../components/Header";
 
 interface userData {
   name: string;
+  exp: number;
   email: string;
   uid: string;
   hsk: number;
@@ -104,11 +105,11 @@ function Profile() {
         console.log("user is logged out");
       }
     });
-  }, [user]);
+  }, []);
   return (
     <div className="flex flex-col bg-indigo-100 min-h-screen select-none">
       <Header />
-      <div className="flex mt-10 justify-center select-text">
+      <div className="flex mt-10 pb-10 justify-center select-text">
         <div className="bg-white rounded-md overflow-hidden w-1/2">
           <div className="flex max-[640px]:flex-col flex-row gap-0">
             <div className="flex flex-col items-center max-[640px]:w-full w-1/2 py-10 text-center text-white font-bold bg-gradient-to-tr from-[#f6d365] to-[#fda085]">
@@ -129,6 +130,7 @@ function Profile() {
               <div className="mt-3 flex flex-col items-center">
                 <p className="text-xl">{userInfo?.name}</p>
                 <p>@{user.displayName}</p>
+                <p>{userInfo?.exp} exp</p>
                 <p className="mt-2">JLPT N{userInfo?.jlpt}</p>
                 <p>HSK {userInfo?.hsk}</p>
                 <EditOutlinedIcon className="mt-2" sx={{color: "black", bgcolor: 'background.paper', borderRadius: 2, minWidth: 35, minHeight: 35, p: 0.5}}/>

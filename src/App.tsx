@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import PrivateRoute from './components/PrivateRoute';
 import AuthContext from './context/AuthContext';
-import {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub} from './pages/index'
+import {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz} from './pages/index'
 
 const App: React.FC = () => {
   const router = createBrowserRouter([
@@ -47,6 +46,10 @@ const App: React.FC = () => {
       path:'/social',
       element:<PrivateRoute><Hub/></PrivateRoute>
     },
+    {
+      path:'jpquiz',
+      element:<PrivateRoute><JPQuiz/></PrivateRoute>
+    }
   ])
   return (
     <AuthContext>

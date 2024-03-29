@@ -7,7 +7,6 @@ import {
   query,
   orderBy,
   limit,
-  FieldValue,
   doc,
   getDoc,
   where,
@@ -31,10 +30,11 @@ interface dbWord {
 
 interface userData {
   name: string;
+  exp: number;
   uid: string;
   hsk: number;
   jlpt: number;
-  jwlevel : number;
+  jwlevel: number;
   zhlast: string;
 }
 
@@ -104,10 +104,12 @@ const JapaneseWord = (props: any) => {
     }
   };
 
+  // save the studied words into the wallet, update the last word studied for the user, and open a quiz
   const goToQuiz = async (e: any) => {
     if(userInfo){
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
-        jwlevel: lastIndex
+        jwlevel: lastIndex,
+        exp: userInfo.exp + 5
       })
       fireWord.forEach(async (word) => {
         const wordTitle = word.word + "(" + word.pronunciation + ")"
@@ -118,7 +120,7 @@ const JapaneseWord = (props: any) => {
           last_studied: serverTimestamp()
         })
       })
-      navigate('/home')
+      navigate('/jpquiz')
     }
     else{
       console.error("User info not loaded, cannot open quiz")

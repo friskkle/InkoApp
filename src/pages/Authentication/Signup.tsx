@@ -20,6 +20,7 @@ export default function Start() {
     const initData = async (uid: string, email: string | null) => {
         await setDoc(doc(firestore, 'users', uid), {
             name: "new user",
+            exp: 0,
             email: email,
             uid: uid,
             hsk: 1,
@@ -112,8 +113,8 @@ export default function Start() {
                         className='mt-6 transition-all block py-3 px-4 w-full text-white font-bold rounded cursor-pointer bg-gradient-to-r from-indigo-600 to-purple-400 hover:from-indigo-700 hover:to-purple-500 focus:bg-indigo-900 transform hover:-translate-y-1 hover:shadow-lg'
                             type="submit" 
                             onClick={onSubmit}>
-                            Sign up                               
-                        </button>                                             
+                            Sign up
+                        </button>
                     </form>   
                    
                     <p className='text-center mt-2'>
