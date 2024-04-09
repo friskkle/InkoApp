@@ -16,7 +16,7 @@ interface userData {
   zhlast: string;
 }
 
-function Header() {
+function Header(props: {title: string}) {
   const navigate = useNavigate();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const { user } = useContext(Context);
@@ -32,7 +32,7 @@ function Header() {
   return (
     <div className="Header bg-white p-6 font-semibold shadow-sm relative flex justify-between items-center">
       <span className="w-auto cursor-pointer" onClick={() => navigate('/home')}>Inko</span>
-      <span className="inline-block">Center</span>
+      <div className="absolute right-0 left-0 justify-self-center">{props.title}</div>
       <span
         className="w-auto flex items-center justify-center gap-1"
         onMouseEnter={handleMouseEnter}

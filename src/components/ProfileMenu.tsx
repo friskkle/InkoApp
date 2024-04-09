@@ -19,9 +19,9 @@ const ProfileMenu: React.FC = () => {
       navigate('/profile')
     }
   return (
-    <div className="dropdown-menu z-10 fixed mt-40 bg-white shadow-sm rounded-[10px] overflow-hidden transition-all duration-100 ease-linear">
+    <div className="dropdown-menu z-10 fixed mt-40 bg-white shadow-sm rounded-[10px] overflow-hidden text-center transition-all duration-100 ease-linear">
       <ul>
-        <li className="hover:bg-slate-50 hover:cursor-pointer focus:ring px-5 py-2" onClick={openAccount}>Account</li>
+        <li className="hover:bg-slate-50 hover:cursor-pointer focus:ring px-5 py-2" onClick={openAccount}>Profile</li>
         <li className="hover:bg-slate-50 hover:cursor-pointer focus:ring px-5 py-2">Settings</li>
         <li className="hover:bg-slate-50 hover:cursor-pointer focus:ring px-5 py-2" onClick={handleLogout}>Logout</li>
       </ul>

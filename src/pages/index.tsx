@@ -9,5 +9,7 @@ import MandarinLearn from './Flashcards/MandarinLearn';
 import Profile from "./Home/Profile";
 import Hub from "./Social/Hub";
 import JPQuiz from "./Flashcards/JapaneseQuiz";
+import Wallet from "./Home/Wallet";
+import QuizDone from "./Flashcards/QuizDone";
 
-export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz}
+export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, QuizDone}

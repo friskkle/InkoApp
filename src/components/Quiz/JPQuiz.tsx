@@ -3,12 +3,30 @@ import { Timestamp, collection, doc, getDoc, getDocs, limit, query, serverTimest
 import { firestore } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../context/AuthContext';
+import { CircularProgress } from '@mui/material';
 
 interface walletWord {
     freq: number;
     last_studied: Timestamp;
     mastery: number;
 }
+
+/* function DataToDomainWalletWord(
+    data: Partial<walletWord>
+): walletWordDomain {
+    return {
+        freq: data.freq ?? 0
+        
+    }
+}
+interface walletWordDomain {
+    freq: number;
+    last_studied: Timestamp;
+    mastery: number;
+}
+
+*/
+
 
 interface quizWord {
     word: string;
@@ -23,6 +41,9 @@ interface quizWord {
 type cardProps = {
     words: walletWord[];
     uid: string;
+    setDone: React.Dispatch<React.SetStateAction<boolean>>;
+    setScore: React.Dispatch<React.SetStateAction<number>>;
+    setExp: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface userData {
@@ -134,13 +155,16 @@ const JPQuizCards = (props: cardProps) => {
                         await updateDoc(doc(firestore, 'users', user.uid), {
                             exp: userInfo?.exp + score/10
                         })
+                        props.setExp(score/10)
+                        props.setScore(score)
                     }
-                    navigate('/home');
+                    props.setDone(true)
                 }
             }
             else{
-                if(score>=10)
+                if(score>=10){
                     setScore(score - 10)
+                }
                 setWrong(true)
             }
         }
@@ -188,7 +212,7 @@ const JPQuizCards = (props: cardProps) => {
                         </div>
                     ) : (
                     <div className='flashcard transform transition-all duration-300 bg-white hover:bg-slate-50'>
-                        <p>Loading...</p>
+                        <CircularProgress />
                     </div>
                     )}
                     </div>

@@ -28,7 +28,6 @@ function Sidebar() {
 			<SidebarRow Icon={EmojiFlagsIcon} title="Topics" />
 			<SidebarRow Icon={PeopleIcon} title="Friends" />
 			<SidebarRow Icon={ChatIcon} title="Messages" />
-			<br />
 		</div>
 	);
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import PrivateRoute from './components/PrivateRoute';
 import AuthContext from './context/AuthContext';
-import {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz} from './pages/index'
+import {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet} from './pages/index'
 
 const App: React.FC = () => {
   const router = createBrowserRouter([
@@ -47,9 +47,13 @@ const App: React.FC = () => {
       element:<PrivateRoute><Hub/></PrivateRoute>
     },
     {
-      path:'jpquiz',
+      path:'/jpquiz',
       element:<PrivateRoute><JPQuiz/></PrivateRoute>
-    }
+    },
+    {
+      path:'/wallet',
+      element:<PrivateRoute><Wallet/></PrivateRoute>
+    },
   ])
   return (
     <AuthContext>

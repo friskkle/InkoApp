@@ -4,6 +4,18 @@ import { Query, Timestamp, collection, getDocs, orderBy, query } from 'firebase/
 import { firestore } from '../../firebase';
 import Post from './Post';
 
+interface postData {
+  title: string;
+  postId: string;
+  profilePic: string;
+  username: string;
+  timestamp: Timestamp;
+  message: string;
+  uid: string;
+  img: string;
+  likes: string[];
+}
+
 function Feed() {
   const [ posts, setPosts ] = useState<any>([]);
   const [update, setUpdate] = useState(1)
@@ -13,7 +25,13 @@ function Feed() {
     const querySnapshot = await getDocs(postQuery);
 
     if(!querySnapshot.empty){
-      setPosts(querySnapshot.docs.map((doc) => ({id: doc.id, data: doc.data()})))
+      const postArray: any = []
+      querySnapshot.docs.forEach((doc) => {
+        let data = doc.data() as postData
+        data.postId = doc.id
+        postArray.push({id: doc.id, data: data})
+      })
+      setPosts(postArray)
     }
   }
 
@@ -30,13 +48,18 @@ function Feed() {
   return (
     <div className='feed flex-1 flex-col justify-center items-center p-10'>
       <NewPost setPost={setUpdate} post={update}/>
-      {posts.map((post: { id: React.Key | null | undefined; data: { profilePic: string; message: string; timestamp: Timestamp; username: string; }; }) => (
+      {posts.map((post: { id: React.Key | null | undefined; data: { title: string; postId: string; profilePic: string; message: string; timestamp: Timestamp; username: string; uid: string; img: string; likes: string[];}; }) => (
 				<Post
 					key={post.id}
+          title = {post.data.title}
 					profilePic={post.data.profilePic}
 					message={post.data.message}
 					timestamp={post.data.timestamp}
 					username={post.data.username}
+          uid={post.data.uid}
+          postId={post.data.postId}
+          img={post.data.img}
+          likes={post.data.likes}
 				/>
 			))}
     </div>

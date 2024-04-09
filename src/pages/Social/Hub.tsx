@@ -6,8 +6,8 @@ import Feed from '../../components/Social/Feed'
 function Hub() {
   return (
     <div className="flex flex-col bg-indigo-100 min-h-screen select-none">
-      <Header/>
-      <div className='flex'>
+      <Header title='Social'/>
+      <div className='flex max-[720px]:flex-col'>
         <Sidebar/>
         <Feed/>
       </div>

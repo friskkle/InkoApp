@@ -54,7 +54,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="App flex flex-col bg-indigo-100 min-h-screen select-none">
-      <Header/>
+      <Header title="Home"/>
       <div className="content flex flex-row p-5 gap-5">
         <div className="status flex flex-auto flex-col">
           <div className="streak flex flex-row text-black text-xl p-5 justify-evenly">

@@ -95,13 +95,33 @@
 	display: flex;
 }
 
-.messageSender__top > form > input {
+.messageSender__top > form > div > textarea {
 	outline-width: 0;
-	padding: 5px 20px;
+  padding: 10px 20px;
+	margin: 0px 10px;
+  margin-top: 0.5rem;
+	flex: 1;
+	border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+	background-color: #eff2f5;
+  resize: none;
+}
+
+.messageSender__top > form > div > input {
+	outline-width: 0;
+	padding: 10px 20px;
 	margin: 0 10px;
+  max-height: 75px;
 	flex: 1;
 	border-radius: 999px;
 	background-color: #eff2f5;
+  overflow: clip;
+}
+
+.messageSender__top > div > form > textarea:hover {
+	background-color: #ebeeef;
 }
 
 .messageSender__top > form > button {
@@ -146,6 +166,20 @@
 	color: #5f25aa;
 }
 
+.post__option:hover > p {
+ color: #5f25aa;
+}
+
+.post__option:hover > a {
+  color: #5f25aa;
+ }
+
+@media screen and (max-width: 560px) {
+  .post__option > p {
+    display: none;
+  }  
+}
+
 .post__image > img {
 	width: 100%;
 }
@@ -158,7 +192,7 @@
 	cursor: pointer;
 }
 .sidebarRow:hover {
-	background-color: lightgray;
+	background-color: white;
 	border-radius: 10px;
 }
 
