@@ -11,5 +11,6 @@ import Hub from "./Social/Hub";
 import JPQuiz from "./Flashcards/JapaneseQuiz";
 import Wallet from "./Home/Wallet";
 import QuizDone from "./Flashcards/QuizDone";
+import PostPage from "./Social/PostPage";
 
-export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, QuizDone}
+export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, QuizDone, PostPage}

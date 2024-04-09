@@ -109,6 +109,19 @@
   resize: none;
 }
 
+.messageSender__top > form > div > div > textarea {
+	outline-width: 0;
+  padding: 10px 20px;
+	margin: 0px 10px;
+	flex: 1;
+	border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+	background-color: #eff2f5;
+  resize: none;
+}
+
 .messageSender__top > form > div > input {
 	outline-width: 0;
 	padding: 10px 20px;

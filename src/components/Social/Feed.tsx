@@ -60,6 +60,7 @@ function Feed() {
           postId={post.data.postId}
           img={post.data.img}
           likes={post.data.likes}
+          full={false}
 				/>
 			))}
     </div>

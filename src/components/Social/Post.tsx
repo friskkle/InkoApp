@@ -7,7 +7,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Context } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface postData {
   title: string;
@@ -19,6 +19,7 @@ interface postData {
   uid: string;
   img: string;
   likes: string[];
+  full: boolean;
 }
 
 interface userData {
@@ -99,19 +100,19 @@ function Post(props: postData) {
 
   return (
     <div className="post w-full mt-3 bg-white shadow-sm rounded-xl hover:bg-gray-50">
-      <div className="post__top w-full flex relative items-center p-4 select-text" onClick={(e) => {e.stopPropagation()}}>
+      <div className="post__top w-full flex relative items-center p-5 select-text" onClick={(e) => {e.stopPropagation()}}>
         <Avatar src={props.profilePic} className="post__avatar mr-3" />
         <div className="post__topInfo">
           <h3 className="inline">{userInfo?.name}</h3>
           <p className="text-xs ml-1 inline text-gray-400">@{props.username}</p>
           <p className="text-sm text-gray-400"> {new Date(props.timestamp?.toDate()).toUTCString()} </p>
         </div>
-        <div className="ml-auto p-2 hover:bg-[#eff2f5] rounded-full transition duration-150" onClick={openMenu}>
+        {user.uid === props.uid && <div className="ml-auto p-2 hover:bg-[#eff2f5] rounded-full transition duration-150" onClick={openMenu}>
           <MoreVertIcon/>
-        </div>
+        </div>}
       </div>
-      <h1 className="pl-5 text-xl font-semibold">{props.title}</h1>
-      <div className="post__bottom mt-2 mb-3 pl-5 pt-6 select-text text-lg cursor-default">
+      <h1 className="pl-10 text-2xl font-semibold">{props.title}</h1>
+      <div className="post__bottom mt-1 mb-3 pl-10 pt-6 select-text text-lg cursor-default">
         <p onClick={(e) => {e.stopPropagation()}}>{props.message}</p>
         <img src={props.img} className="max-h-80 mt-3"/>
       </div>
@@ -123,10 +124,13 @@ function Post(props: postData) {
           <a className="ml-[10px]">{likeCount}</a>
         </div>
 
-        <div className="post__option flex items-center justify-center p-2 flex-1 hover:bg-[#eff2f5] rounded-xl transition duration-150">
+        {!props.full &&
+        <Link className="post__option flex flex-1 justify-center p-2 hover:bg-[#eff2f5] rounded-xl transition duration-150" to={`post/${props.postId}`}>
+        <div className="post__option flex items-center">
           <ChatBubbleOutlineIcon/>
           <p className="ml-[10px]">Comment</p>
         </div>
+        </Link>}
 
         <div className="post__option flex items-center justify-center p-2 flex-1 hover:bg-[#eff2f5] rounded-xl transition duration-150">
           <NearMeIcon/>
