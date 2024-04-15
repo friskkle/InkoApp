@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Post from "../../components/Social/Post";
-import { Timestamp, collection, doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../firebase";
+import { Query, Timestamp, addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { firestore, storage } from "../../firebase";
 import Sidebar from "../../components/Social/SocialSidebar";
 import { Context } from "../../context/AuthContext";
 import { Avatar, TextareaAutosize } from "@mui/material";
@@ -10,10 +10,9 @@ import WebIcon from '@mui/icons-material/Web';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
-
-interface propType {
-    postId: string;
-}
+import { useNavigate, useParams } from "react-router-dom";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import PostComment from "../../components/Social/PostComment";
 
 interface postData {
     title: string;
@@ -22,14 +21,30 @@ interface postData {
     timestamp: Timestamp;
     message: string;
     uid: string;
+    url: string;
     img: string;
     likes: string[];
 }
 
-const PostPage = (props: propType) => {
+interface commentData {
+    postId: string;
+    username: string;
+    message: string;
+    profilePic: string;
+    uid: string;
+    timestamp: Timestamp;
+    img: string;
+    likes: string[];
+}
+
+const PostPage = () => {
+    const { postId } = useParams();
     const { user } = useContext(Context);
+    const navigate = useNavigate();
+    const commentRef = collection(firestore, `posts/${postId}/comments`);
 
     const [post, setPost] = useState<postData>();
+    const [comments, setComments] = useState<any>([]);
     const [input, setInput] = useState("");
     const [img, setImg] = useState<any>("");
     const [imgUrl, setImgUrl] = useState<any>("");
@@ -38,7 +53,7 @@ const PostPage = (props: propType) => {
     const getPost = async () => {
         const postRef = collection(firestore, "posts");
 
-        const docRef = doc(postRef, props.postId);
+        const docRef = doc(postRef, postId);
         const postDoc = await getDoc(docRef);
         if (postDoc.exists()) {
             const docData = postDoc.data() as postData;
@@ -46,27 +61,117 @@ const PostPage = (props: propType) => {
         } else console.error("No data found!");
     };
 
-    const handleSubmit = () => {
-        return;
+    const getComments = async (postQuery: Query) => {
+        const querySnapshot = await getDocs(postQuery);
+    
+        if(!querySnapshot.empty){
+          const postArray: any = []
+          querySnapshot.docs.forEach((doc) => {
+            let data = doc.data() as commentData
+            data.postId = doc.id
+            postArray.push({id: doc.id, data: data})
+          })
+          setComments(postArray)
+        }
+      }
+
+    const handleUpload = async () => {
+        if (!img) {
+          return
+        } else {
+          console.log("uploading image");
+          var time = new Date()
+          const timeName = Date.parse(time.toString())
+          const storageRef = ref(storage, `/post-pictures/${user.uid}${timeName}`);
+    
+          const uploadTask = uploadBytesResumable(storageRef, img);
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const percent = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
+              console.log(`image ${percent}% uploaded`);
+            },
+            (err) => console.error(err),
+            () => {
+              // download url
+              getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+                await addDoc(collection(firestore, `posts/${postId}/comments`), {
+                  message: input,
+                  timestamp: serverTimestamp(),
+                  profilePic: user.photoURL,
+                  username: user.displayName,
+                  img: url,
+                  uid: user.uid,
+                  likes: [],
+                });
+              });
+            }
+          );
+        }
+      }
+
+    const handleSubmit = async (e: any) => {
+        e.preventDefault(); //preventing for a refresh
+        if(img)
+        await handleUpload()
+        else
+        await addDoc(collection(firestore, `posts/${postId}/comments`), {
+            message: input,
+            timestamp: serverTimestamp(),
+            profilePic: user.photoURL,
+            username: user.displayName,
+            img: "",
+            uid: user.uid,
+            likes: [],
+        });
+
+        // DB stuff
+        //resetting the values
+        setInput("");
+        setImg("");
+        setImgUrl("");
+        setKey(key + 1);
     };
 
     const handlePic = (e: any) => {
         setImg(e.target.files[0]);
         setImgUrl(URL.createObjectURL(e.target.files[0]))
+    };
+
+    const goBack = () => {
+        navigate(-1);
     }
 
     useEffect(() => {
         getPost();
 
+        const commentsQuery = query(commentRef, orderBy('timestamp', 'desc'))
+        getComments(commentsQuery);
+
         setInterval(() => {
             getPost();
+            getComments(commentsQuery);
         }, 5000);
     }, []);
-
-    return (
+    if(!postId) {
+        console.error("Post ID is undefined");
+        return (
+            <div>
+                Post not found!
+            </div>
+        )
+    }
+    else return (
         <div className="flex flex-col bg-indigo-100 min-h-screen select-none relative">
             <Header title="Post" />
-            <div className="flex w-full">
+            <div className="pl-12 pt-10">
+                <button onClick={goBack} className='back-button w-20 p-2 transition-all inline-block text-black font-bold rounded cursor-pointer bg-gradient-to-r from-slate-50 to-slate-100 hover:text-white hover:from-slate-400 hover:to-slate-500 focus:bg-indigo-900 transform hover:-translate-y-0 hover:shadow-lg'>
+                    Return
+                </button>
+            </div>
+            <div className="flex max-[720px]:flex-col w-full">
                 <Sidebar />
                 <div className="flex flex-col p-10 w-full">
                     {post && (
@@ -77,12 +182,15 @@ const PostPage = (props: propType) => {
                             timestamp={post.timestamp}
                             username={post.username}
                             uid={post.uid}
-                            postId={props.postId}
+                            postId={postId}
+                            url={post.url}
                             img={post.img}
                             likes={post.likes}
                             full={true}
                         />
                     )}
+                    
+                    {/* Comments section */}
                     <div className="comments bg-white rounded-xl p-6 mt-4 shadow-sm">
                         <div className="messageSender__top flex flex-col border-b-black p-4">
                             <div className="ml-3 flex items-center">
@@ -143,6 +251,22 @@ const PostPage = (props: propType) => {
                                     />
                                 </div>
                             </div>
+                        </div>
+                        <div>
+                            {comments.map((comment: {id: React.Key | null | undefined; data: {postId: string; profilePic: string; message: string; timestamp: Timestamp; username: string; uid: string; img: string; likes: string[];};}) => (
+                                <PostComment
+                                    key={comment.id}
+                                    postId={comment.data.postId}
+                                    username={comment.data.username}
+                                    profilePic={comment.data.profilePic}
+                                    timestamp={comment.data.timestamp}
+                                    message={comment.data.message}
+                                    uid={comment.data.uid}
+                                    img={comment.data.img}
+                                    likes={comment.data.likes}
+                                    parentId={postId}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

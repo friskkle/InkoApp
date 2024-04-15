@@ -111,6 +111,10 @@ function Profile() {
     }
   };
 
+  const toSocialProfile = async () => {
+    navigate(`/social/profile/${userInfo?.uid}`)
+  }
+
   const handleUpload = () => {
     setShowConfirmationModal(false);
 
@@ -137,6 +141,11 @@ function Profile() {
               await updateProfile(auth.currentUser, {
                 photoURL: url,
               });
+              if(userInfo) {
+                await updateDoc(doc(firestore, "users", userInfo.uid), {
+                photoUrl: url,
+              });
+            }
             }
           });
 
@@ -148,7 +157,6 @@ function Profile() {
   };
 
   useEffect(() => {
-    console.log("fetching user info...");
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
@@ -264,6 +272,9 @@ function Profile() {
                   )}
                 </div>
               </div>
+              <Button variant="contained" onClick={toSocialProfile}>
+                Social Page
+              </Button>
             </div>
           </div>
         </div>

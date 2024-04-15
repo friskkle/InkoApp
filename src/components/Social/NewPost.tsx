@@ -20,8 +20,10 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
   const [key, setKey] = useState(1);
   const [title, setTitle] = useState("");
   const [input, setInput] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const [img, setImg] = useState<any>("");
-  const [imgUrl, setImgUrl] = useState<any>("")
+  const [imgUrl, setImgUrl] = useState<any>("");
+  const [linkOpen, setLinkOpen] = useState(false)
 
   const handleUpload = async () => {
     if (!img) {
@@ -51,9 +53,10 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
               timestamp: serverTimestamp(),
               profilePic: user.photoURL,
               username: user.displayName,
+              url: linkUrl,
               img: url,
               uid: user.uid,
-              likes: 0,
+              likes: [],
             });
           });
         }
@@ -61,8 +64,9 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
     }
   }
 
+  // post submission
   const handleSubmit = async (e: any) => {
-    e.preventDefault(); //preventing for a refresh
+    e.preventDefault(); //preventing a refresh
     if(img)
       await handleUpload()
     else
@@ -72,18 +76,20 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
         timestamp: serverTimestamp(),
         profilePic: user.photoURL,
         username: user.displayName,
+        url: linkUrl,
         img: "",
         uid: user.uid,
-        likes: 0,
+        likes: [],
       });
 
     // DB stuff
-    //resetting the values
+    // resetting the values
     props.setPost(props.post + 1)
     setInput("");
     setTitle("");
     setImg("");
     setImgUrl("");
+    setLinkUrl("");
   };
 
   const handlePic = (e: any) => {
@@ -110,6 +116,12 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
                 className="messageSender__input w-[96%]"
                 placeholder="Write your post here!"
               />
+              {linkOpen && <input
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                className="messageSender__input"
+                placeholder="Insert article or video url"
+              />}
               <div className="previews ml-[10px] mt-2">
                 {img && <div onClick={() => {setImg(""); setImgUrl(""); setKey(key+1);}}><CloseIcon className="cursor-pointer"/></div>}
                 <img className="max-h-52" src={imgUrl}/>
@@ -122,7 +134,7 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
         </div>
 
         <div className="messageSender__bottom cursor-pointer">
-          <div className="messageSender__option">
+          <div className="messageSender__option" onClick={() => {setLinkOpen(!linkOpen); setLinkUrl("")}}>
             <WebIcon style={{ color: "blue" }} />
             <h3>Site Link</h3>
           </div>

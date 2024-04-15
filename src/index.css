@@ -187,6 +187,18 @@
   color: #5f25aa;
  }
 
+ .post__option:hover > div > .MuiSvgIcon-root {
+	color: #5f25aa;
+}
+
+.post__option:hover > div > p {
+ color: #5f25aa;
+}
+
+.post__option:hover > div > a {
+  color: #5f25aa;
+ }
+
 @media screen and (max-width: 560px) {
   .post__option > p {
     display: none;

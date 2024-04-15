@@ -26,7 +26,7 @@ function Sidebar() {
 		<div className="sidebar sticky p-10">
 			<SidebarRow src={user.photoURL} title={user.displayName} />
 			<SidebarRow Icon={EmojiFlagsIcon} title="Topics" />
-			<SidebarRow Icon={PeopleIcon} title="Friends" />
+			<SidebarRow Icon={PeopleIcon} title="Following" />
 			<SidebarRow Icon={ChatIcon} title="Messages" />
 		</div>
 	);

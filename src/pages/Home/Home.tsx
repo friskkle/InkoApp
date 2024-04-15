@@ -55,7 +55,7 @@ const Home: React.FC = () => {
   return (
     <div className="App flex flex-col bg-indigo-100 min-h-screen select-none">
       <Header title="Home"/>
-      <div className="content flex flex-row p-5 gap-5">
+      <div className="content flex max-[768px]:flex-col p-5 gap-5">
         <div className="status flex flex-auto flex-col">
           <div className="streak flex flex-row text-black text-xl p-5 justify-evenly">
             <div className="day-streak mx-1 flex flex-col text-center">
@@ -80,19 +80,30 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="today flex flex-auto flex-col p-5 text-blue-500 gap-3 bg-white rounded-xl">
+        <div className="today flex flex-auto flex-col p-5 text-blue-500 bg-white rounded-xl">
           <h1 className="text-5xl font-bold">TODAY</h1>
           <h1>Here are your tasks for today, keep up the good work!</h1>
-          <div className="tasks flex flex-col">
-            <div className="cards">
+          <div className="tasks flex flex-col mt-3 items-center">
+            <div className="cards columns-2">
               <a href="/vocabulary">
-                <div className="inline-block bg-orange-200 hover:bg-orange-300 h-[200px] w-[200px] rounded-xl p-4 text-black m-2 text-4xl transition ease-[0.2s]">
+                <div 
+                  className="bg-orange-200 hover:bg-orange-300 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]"
+                  style={{height: `${'Vocabulary flashcards'.length/2}rem`, width: `${'Vocabulary flashcards'.length/1.6}rem`}}>
                   Vocabulary flashcards
                 </div>
               </a>
               <a href="/social">
-                <div className="inline-block bg-purple-100 hover:bg-purple-200 h-[200px] w-[200px] rounded-xl p-4 text-black m-2 text-4xl transition ease-[0.2s]">
+                <div
+                  className="bg-purple-100 hover:bg-purple-200 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]"
+                  style={{height: `${'Social Hub'.length/1.4}rem`, width: `${'Social Hub'.length}rem`}}>
                   Social Hub
+                </div>
+              </a>
+              <a href="/wallet">
+                <div
+                  className="bg-green-100 hover:bg-green-200 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]"
+                  style={{height: `${'wallet'.length/1.15}rem`, width: `${'social hub'.length}rem`}}>
+                  Wallet
                 </div>
               </a>
             </div>

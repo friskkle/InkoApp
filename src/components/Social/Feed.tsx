@@ -12,6 +12,7 @@ interface postData {
   timestamp: Timestamp;
   message: string;
   uid: string;
+  url: string;
   img: string;
   likes: string[];
 }
@@ -48,7 +49,7 @@ function Feed() {
   return (
     <div className='feed flex-1 flex-col justify-center items-center p-10'>
       <NewPost setPost={setUpdate} post={update}/>
-      {posts.map((post: { id: React.Key | null | undefined; data: { title: string; postId: string; profilePic: string; message: string; timestamp: Timestamp; username: string; uid: string; img: string; likes: string[];}; }) => (
+      {posts.map((post: { id: React.Key | null | undefined; data: { title: string; postId: string; profilePic: string; message: string; timestamp: Timestamp; username: string; uid: string; url: string; img: string; likes: string[];}; }) => (
 				<Post
 					key={post.id}
           title = {post.data.title}
@@ -58,6 +59,7 @@ function Feed() {
 					username={post.data.username}
           uid={post.data.uid}
           postId={post.data.postId}
+          url={post.data.url}
           img={post.data.img}
           likes={post.data.likes}
           full={false}

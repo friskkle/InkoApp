@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from "@mui/material";
-import { Timestamp, arrayRemove, collection, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { Timestamp, arrayRemove, collection, deleteDoc, doc, getCountFromServer, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -17,6 +17,7 @@ interface postData {
   timestamp: Timestamp;
   message: string;
   uid: string;
+  url: string;
   img: string;
   likes: string[];
   full: boolean;
@@ -33,15 +34,18 @@ function Post(props: postData) {
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
+  const checkEmbed = ["youtube", "twitter", "x.com", "maps"]
+
   const { user } = useContext(Context)
   const [userInfo, setUserInfo] = useState<userData>()
   const [likeCount, setLikeCount] = useState(0)
-  const [open, setOpen] = useState(false)
   const [deleteToast, setDeleteToast] = useState(false)
+  const [commentCount, setCommentCount] = useState(0)
 
   const usersRef = collection(firestore, 'users')
 
-  const getUserInfo = async (uid: string) => {
+  // collects the user information of the poster, any link titles, and how many comments the post has
+  const getInfo = async (uid: string) => {
     const docRef = doc(usersRef, uid);
     const userDoc = await getDoc(docRef);
 
@@ -51,24 +55,29 @@ function Post(props: postData) {
     } else {
       console.log("No user data found!");
     }
+
+    const commentRef = collection(firestore, `posts/${props.postId}/comments`)
+    const snapshot = await getCountFromServer(commentRef);
+    setCommentCount(snapshot.data().count)
   };
 
+  // procedures of liking a post
   const handleLike = async () => {
     const postRef = collection(firestore, 'posts')
     if (props.likes) {
-      if (props.likes.includes(user.uid)) {
+      if (props.likes.includes(user.uid)) { // if the user has already liked the post, remove the like
         await updateDoc(doc(postRef, props.postId), {
           likes: arrayRemove(user.uid)
         })
         setLikeCount(likeCount - 1)
         return
       }
-      await updateDoc(doc(postRef, props.postId), {
+      await updateDoc(doc(postRef, props.postId), { // add the user to the like list
         likes: [...props.likes, user.uid]
       })
       setLikeCount(likeCount + 1)
     }
-    else {
+    else { // creates the list if there is no likes on the post yet
       await updateDoc(doc(postRef, props.postId), {
         likes: [user.uid]
       })
@@ -76,21 +85,26 @@ function Post(props: postData) {
     }
   }
 
-  const openPost = () => {
-    navigate('/home')
+  const openProfile = () => {
+    navigate(`/social/profile/${props.uid}`)
   }
 
+  const openPost = () => {
+    navigate(`/social/post/${props.postId}`)
+  }
+  // Opening the delete menu
   const openMenu = () => {
     setShowConfirmationModal(true)
   }
 
+  // Handling the deletion of a post
   const handleDelete = async () => {
     await deleteDoc(doc(firestore, "posts", props.postId))
     setDeleteToast(true)
   }
 
   useEffect(() => {
-    getUserInfo(props.uid)
+    getInfo(props.uid)
 
     if(props.likes)
       setLikeCount(props.likes.length)
@@ -101,10 +115,12 @@ function Post(props: postData) {
   return (
     <div className="post w-full mt-3 bg-white shadow-sm rounded-xl hover:bg-gray-50">
       <div className="post__top w-full flex relative items-center p-5 select-text" onClick={(e) => {e.stopPropagation()}}>
-        <Avatar src={props.profilePic} className="post__avatar mr-3" />
+        <div onClick={openProfile}>
+          <Avatar src={props.profilePic} className="post__avatar mr-3 cursor-pointer" />
+        </div>
         <div className="post__topInfo">
-          <h3 className="inline">{userInfo?.name}</h3>
-          <p className="text-xs ml-1 inline text-gray-400">@{props.username}</p>
+          <h3 onClick={openProfile} className="inline hover:underline cursor-pointer">{userInfo?.name}</h3>
+          <p onClick={openProfile} className="text-xs ml-1 inline text-gray-400 hover:underline cursor-pointer">@{props.username}</p>
           <p className="text-sm text-gray-400"> {new Date(props.timestamp?.toDate()).toUTCString()} </p>
         </div>
         {user.uid === props.uid && <div className="ml-auto p-2 hover:bg-[#eff2f5] rounded-full transition duration-150" onClick={openMenu}>
@@ -114,6 +130,9 @@ function Post(props: postData) {
       <h1 className="pl-10 text-2xl font-semibold">{props.title}</h1>
       <div className="post__bottom mt-1 mb-3 pl-10 pt-6 select-text text-lg cursor-default">
         <p onClick={(e) => {e.stopPropagation()}}>{props.message}</p>
+        {props.url && <div className="text-blue-600 underline">
+          <a href={props.url} target="_blank">Open link</a>
+        </div>}
         <img src={props.img} className="max-h-80 mt-3"/>
       </div>
 
@@ -125,11 +144,11 @@ function Post(props: postData) {
         </div>
 
         {!props.full &&
-        <Link className="post__option flex flex-1 justify-center p-2 hover:bg-[#eff2f5] rounded-xl transition duration-150" to={`post/${props.postId}`}>
-        <div className="post__option flex items-center">
-          <ChatBubbleOutlineIcon/>
-          <p className="ml-[10px]">Comment</p>
-        </div>
+        <Link className="post__option flex flex-1 justify-center p-2 hover:bg-[#eff2f5] rounded-xl transition duration-150" to={`/social/post/${props.postId}`}>
+          <div className="post__option w-full flex items-center justify-center">
+            <ChatBubbleOutlineIcon/>
+            <p className="ml-[10px]">{commentCount}</p>
+          </div>
         </Link>}
 
         <div className="post__option flex items-center justify-center p-2 flex-1 hover:bg-[#eff2f5] rounded-xl transition duration-150">
