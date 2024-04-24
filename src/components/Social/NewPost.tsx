@@ -98,7 +98,7 @@ function NewPost(props: {setPost: React.Dispatch<React.SetStateAction<number>>, 
   }
 
   return (
-    <div>
+    <div className="w-full">
       <div className="messageSender mt-5 flex flex-col bg-white rounded-xl shadow-sm w-full">
         <div className="messageSender__top flex border-b-black p-4">
           <Avatar src={user.photoURL} />

@@ -31,6 +31,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import Header from "../../components/Header";
 import Post from "../../components/Social/Post";
+import Sidebar from "../../components/Social/SocialSidebar";
 
 interface userData {
     name: string;
@@ -100,7 +101,7 @@ const SocialProfile = () => {
             }
             else {
                 if (myData.following) {
-                    if (myData.following.includes(docData.uid))
+                    if (myData.following.includes(`${docData.uid},${docData.photoUrl}`))
                         setIsFollowing(true);
                 }
             }
@@ -127,15 +128,21 @@ const SocialProfile = () => {
             setIsFollowing(false)
 
             await updateDoc(doc(usersRef, user.uid), {
-                following: arrayRemove(userInfo?.uid)
+                following: arrayRemove(`${userInfo?.uid},${userInfo?.photoUrl}`)
             });
+            await updateDoc(doc(usersRef, userInfo?.uid), {
+                followers: arrayRemove(`${user.uid},${user.photoURL}`)
+            })
         }
         else {
             setIsFollowing(true)
 
             await updateDoc(doc(usersRef, user.uid), {
-                following: arrayUnion(userInfo?.uid)
+                following: arrayUnion(`${userInfo?.uid},${userInfo?.photoUrl}`)
             });
+            await updateDoc(doc(usersRef, userInfo?.uid), {
+                followers: arrayUnion(`${user.uid},${user.photoURL}`)
+            })
         }
     }
 
@@ -146,8 +153,9 @@ const SocialProfile = () => {
     return (
         <div className="flex flex-col bg-indigo-100 min-h-screen select-none">
             <Header title="Profile" />
-            <div className="flex mt-10 pb-10 justify-center select-text">
-                <div className="bg-white rounded-md overflow-hidden w-1/2 max-[426px]:w-2/3 transform transition-all duration-500">
+            <div className="flex max-[768px]:flex-col max-[768px]:items-center mt-10 pb-10 select-text">
+                <div className="min-[768px]:mr-auto"><Sidebar/></div>
+                <div className="bg-white rounded-md min-[768px]:mr-auto overflow-hidden max-[768px]:w-[90%] w-[60%] max-[426px]:w-2/3 transform transition-all duration-500">
                     <div className="flex flex-col gap-0">
                         <div className="flex flex-col items-center max-[768px]:w-full py-10 text-center text-white font-bold bg-gradient-to-tr from-purple-400 to-purple-500">
                             <div className="relative w-[75px] h-[75px] cursor-pointer">

@@ -49,7 +49,7 @@ export default function JPQuiz() {
 
     const getWords = async (uid: string) => {
         const userRef = collection(firestore, `users/${uid}/JPwallet`)
-        const q = query(userRef, orderBy("mastery"), orderBy("last_studied"), limit(2))
+        const q = query(userRef, orderBy("mastery"), orderBy("last_studied"), limit(20))
         const querySnapshot = await getDocs(q)
 
         let wordList: any[] = [];

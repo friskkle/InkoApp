@@ -4,6 +4,7 @@ import QuizDone from "../Flashcards/QuizDone";
 import { Context } from "../../context/AuthContext";
 import { Timestamp, collection, getDocs } from "firebase/firestore";
 import { firestore } from "../../firebase";
+import ExpandedCard from "../../components/Wallet/ExpandedCard";
 
 interface wordData {
   frequency: number;
@@ -17,6 +18,9 @@ const Wallet = () => {
 
   const [walletWords, setWalletWords] = useState<any>([]);
   const [mode, setMode] = useState("JP");
+  const [curWord, setCurWord] = useState("");
+  const [pronunciation, setPronunciation] = useState("");
+  const [popup, setPopup] = useState(false);
 
   const getWords = async () => {
     const wordsRef = collection(firestore, `users/${user.uid}/${mode}wallet`);
@@ -33,7 +37,13 @@ const Wallet = () => {
       })
       setWalletWords(wordArray);
     }
-  }
+  };
+
+  const openWord = async (word: string, hrgn: string) => {
+    setCurWord(word)
+    setPronunciation(hrgn)
+    setPopup(true)
+  };
 
   useEffect(() => {
     getWords();
@@ -53,7 +63,16 @@ const Wallet = () => {
             <div
               key={word.id}
               className={`mb-4 h-[100px] break-inside-avoid rounded-xl text-center content-evenly text-2xl font-bold border-2 border-slate-400/10 bg-neutral-100 p-4 dark:bg-neutral-900 hover:bg-neutral-50`}
-              style={{height: `${word.data.word.length*1.2}rem`}}>
+              style={{height: `${word.data.word.length*1.2}rem`}}
+              onClick={() => {
+                const match = word.data.word.match(/([\p{L}\p{N}]+)\s*\(([\p{L}\p{N}]+)\)/u);
+                if (match) {
+                  const wordBeforeBracket = match[1];
+                  const wordInBracket = match[2];
+                  openWord(wordBeforeBracket, wordInBracket);
+                }
+              }}
+              >
                 {word.data.word}
             </div>
           )) :
@@ -68,6 +87,7 @@ const Wallet = () => {
           )}
         </div>
       </div>
+      {popup && <ExpandedCard word={curWord} pronunciation={pronunciation} setPopup={setPopup}/>}
     </div>
   );
 };

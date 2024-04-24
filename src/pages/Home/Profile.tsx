@@ -272,9 +272,9 @@ function Profile() {
                   )}
                 </div>
               </div>
-              <Button variant="contained" onClick={toSocialProfile}>
+              {!edit &&<Button variant="contained" onClick={toSocialProfile}>
                 Social Page
-              </Button>
+              </Button>}
             </div>
           </div>
         </div>

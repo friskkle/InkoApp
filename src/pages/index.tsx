@@ -13,5 +13,6 @@ import Wallet from "./Home/Wallet";
 import QuizDone from "./Flashcards/QuizDone";
 import PostPage from "./Social/PostPage";
 import SocialProfile from "./Social/SocialProfile";
+import Following from "./Social/Following";
 
-export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, QuizDone, PostPage, SocialProfile}
+export {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, QuizDone, PostPage, SocialProfile, Following}

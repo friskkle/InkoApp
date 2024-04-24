@@ -4,6 +4,7 @@ import { Avatar } from "@mui/material";
 import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatIcon from '@mui/icons-material/Chat';
+import { useNavigate } from "react-router-dom";
 
 function SidebarRow( {src, Icon, title} ) {
     return (
@@ -21,13 +22,14 @@ function SidebarRow( {src, Icon, title} ) {
 
 function Sidebar() {
 	const { user } = useContext(Context);
+    const navigate = useNavigate();
 
 	return (
 		<div className="sidebar sticky p-10">
-			<SidebarRow src={user.photoURL} title={user.displayName} />
-			<SidebarRow Icon={EmojiFlagsIcon} title="Topics" />
-			<SidebarRow Icon={PeopleIcon} title="Following" />
-			<SidebarRow Icon={ChatIcon} title="Messages" />
+			<div onClick={()=>{navigate(`/social/profile/${user.uid}`)}}><SidebarRow src={user.photoURL} title={user.displayName} /></div>
+			<div onClick={()=>{navigate(`/social`)}}><SidebarRow Icon={EmojiFlagsIcon} title="Topics" /></div>
+			<div onClick={()=>{navigate(`/social/${user.uid}/following`)}}><SidebarRow Icon={PeopleIcon} title="Following" /></div>
+			<div onClick={()=>{navigate(`/social`)}}><SidebarRow Icon={ChatIcon} title="Messages" /></div>
 		</div>
 	);
 }

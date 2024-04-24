@@ -6,15 +6,15 @@ import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
-interface commentData {
-    postId: string;
-    username: string;
-    message: string;
-    profilePic: string;
+interface userExample {
     uid: string;
-    timestamp: Timestamp;
-    img: string;
+    docId: string;
+    photoUrl: string;
+    example: string;
+    meaning: string;
     likes: string[];
+    likeCount: number;
+    timestamp: Timestamp;
     parentId: string;
 }
 
@@ -24,7 +24,7 @@ interface userData {
     joindate: Timestamp;
 }
 
-const PostComment = (props: commentData) => {
+const WordComment = (props: userExample) => {
     const { user } = useContext(Context);
     const usersRef = collection(firestore, 'users');
 
@@ -34,24 +34,27 @@ const PostComment = (props: commentData) => {
 
     const [userInfo, setUserInfo] = useState<userData>()
 
-    const handleLike = async () => { // handling the click of a like button
-        const postRef = collection(firestore, `posts/${props.parentId}/comments`)
+    const handleLike = async () => {
+        const postRef = collection(firestore, `japanese/${props.parentId}/userexamples`)
         if (props.likes) {
-          if (props.likes.includes(user.uid)) { // unlike if the user already liked the post
-            await updateDoc(doc(postRef, props.postId), {
-              likes: arrayRemove(user.uid)
+          if (props.likes.includes(user.uid)) {
+            await updateDoc(doc(postRef, props.docId), {
+              likes: arrayRemove(user.uid),
+              likeCount: props.likeCount - 1
             })
             setLikeCount(likeCount - 1)
             return
           }
-          await updateDoc(doc(postRef, props.postId), {
-            likes: [...props.likes, user.uid]
+          await updateDoc(doc(postRef, props.docId), {
+            likes: [...props.likes, user.uid],
+            likeCount: props.likeCount + 1
           })
           setLikeCount(likeCount + 1)
         }
         else {
-          await updateDoc(doc(postRef, props.postId), {
-            likes: [user.uid]
+          await updateDoc(doc(postRef, props.docId), {
+            likes: [user.uid],
+            likeCount: props.likeCount + 1
           })
           setLikeCount(likeCount + 1)
         }
@@ -62,7 +65,7 @@ const PostComment = (props: commentData) => {
     }
 
     const handleDelete = async () => {
-        await deleteDoc(doc(firestore, `posts/${props.parentId}/comments`, props.postId))
+        await deleteDoc(doc(firestore, `japanese/${props.parentId}/userexamples`, props.docId))
         setDeleteToast(true)
     }
 
@@ -70,14 +73,13 @@ const PostComment = (props: commentData) => {
         if(props.likes)
             setLikeCount(props.likes.length)
     }, [props.likes, likeCount])
-
-    return (
-        <div className='border-t-[1px] border-gray-200 border-solid'>
+  return (
+    <div className='mt-5 border-t-[1px] border-gray-200 border-solid'>
             <div className="post__top w-full flex relative items-center p-5 select-text" onClick={(e) => { e.stopPropagation() }}>
-                <Avatar src={props.profilePic} className="post__avatar mr-3" />
+                <Avatar src={props.photoUrl} className="post__avatar mr-3" />
                 <div className="post__topInfo">
                     <h3 className="inline">{userInfo?.name}</h3>
-                    <p className="text-xs ml-1 inline text-gray-400">@{props.username}</p>
+                    {/* <p className="text-xs ml-1 inline text-gray-400">@{props.uid}</p> */}
                     <p className="text-sm text-gray-400"> {new Date(props.timestamp?.toDate()).toUTCString()} </p>
                 </div>
                 {user.uid === props.uid && <div className="ml-auto p-2 hover:bg-[#eff2f5] rounded-full transition duration-150" onClick={openMenu}>
@@ -85,15 +87,15 @@ const PostComment = (props: commentData) => {
                 </div>}
             </div>
             <div className='body flex px-5'>
-                <span>{props.message}</span>
+                <div className='flex flex-col text-left'>
+                    <p>"{props.example}"</p>
+                    <p>"{props.meaning}"</p>
+                </div>
                 <div className="post__option flex items-center ml-auto p-2 hover:bg-[#eff2f5] rounded-xl transition duration-150"
                     onClick={handleLike}>
                     <ThumbUpIcon className="like2"/>
                     <a className="ml-[10px]">{likeCount}</a>
                 </div>
-            </div>
-            <div className='attachments p-5 pt-0'>
-                <img src={props.img} className='max-h-36 mt-3'/>
             </div>
             <Dialog
                 open={showConfirmationModal}
@@ -108,7 +110,7 @@ const PostComment = (props: commentData) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="delete-confirmation-desc">
-                        Are you sure you want to delete this comment?
+                        Are you sure you want to delete this post?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -129,10 +131,10 @@ const PostComment = (props: commentData) => {
                 open={deleteToast}
                 autoHideDuration={3000}
                 onClose={() => setDeleteToast(false)}
-                message="Comment deleted."
+                message="Submission deleted."
             />
         </div>
-    )
+  )
 }
 
-export default PostComment
+export default WordComment
