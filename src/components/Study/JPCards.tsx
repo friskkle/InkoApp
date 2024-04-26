@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {ArrowBigLeft, ArrowBigRight, CircleDot, Circle} from "lucide-react"
+import { Timestamp } from 'firebase/firestore';
+import WordComment from '../Wallet/WordComment';
 
 interface dbWord {
     word: string;
@@ -9,18 +11,32 @@ interface dbWord {
     meanings: string[];
     pronunciation: string;
     type: string;
+    wordId: string;
   }
 
 type cardProps = {
     words: dbWord[];
+    userExamples: userExample[];
     decNum: () => void;
     incrNum: () => void;
+}
+
+interface userExample {
+    uid: string;
+    docId: string;
+    photoUrl: string;
+    example: string;
+    meaning: string;
+    likes: string[];
+    likeCount: number;
+    timestamp: Timestamp;
 }
 
 export default function JPCards(props: cardProps) {
     const [curIndex, setCurIndex] = useState(0);
     const [curNum, setCurNum] = useState(1);
     const [isFlipped, setisFlipped] = useState<Array<boolean>>(Array(props.words.length).fill(false))
+    const communityExamples: any = props.userExamples
 
     function ShowPrevImg() {
         setCurIndex(index => {
@@ -76,6 +92,36 @@ export default function JPCards(props: cardProps) {
                             <li key={index}>"{sense}"</li>
                         ))}
                         </ul>
+                        <div>
+                        {communityExamples.map(
+                        (example: {
+                            id: React.Key | null | undefined;
+                            data: {
+                                uid: string;
+                                docId: string;
+                                photoUrl: string;
+                                example: string;
+                                meaning: string;
+                                likes: string[];
+                                likeCount: number;
+                                timestamp: Timestamp;
+                            };
+                            }) => (
+                                <WordComment 
+                                key={example.id}
+                                uid= {example.data.uid}
+                                docId={example.data.docId}
+                                photoUrl={example.data.photoUrl}
+                                example={example.data.example}
+                                meaning={example.data.meaning}
+                                likes={example.data.likes}
+                                likeCount={example.data.likeCount}
+                                timestamp={example.data.timestamp}
+                                parentId={word.wordId}
+                                mode='JP'/>
+                            )
+                        )}
+                        </div>
                     </div>}
                   </div>
                 ) : (

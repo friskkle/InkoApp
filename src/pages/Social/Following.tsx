@@ -69,19 +69,19 @@ const Following = () => {
   return (
     <div className="flex flex-col bg-indigo-100 min-h-screen select-none relative">
       <Header title="Following" />
-      <div className="flex p-8 items-center">
+      <div className="flex">
         <Sidebar/>
-        <div className="columns-4 w-2/3 gap-4 mt-5 bg-white rounded-2xl p-10">
+        <div className="w-[90%] columns-5 gap-4 mt-10 mr-8 bg-white rounded-2xl p-10">
           {followed.length ?
           followed.map((uid, index) => (
             <div
                 key={index}
-                className="hover:shadow-md h-fit w-fit rounded-full border-solid border-slate-400/10 border-2"
+                className="hover:shadow-md hover:-translate-y-1 transition duration-100 h-fit w-fit rounded-full border-solid border-slate-400/10 border-2"
                 onClick={() => {navigate(`/social/profile/${uid}`)}}>
                 <Avatar src={followedPics[index]} style={{height: '5rem', width: '5rem'}}/>
             </div>
           )) :
-          [24, 36, 36, 32, 32, 32, 16, 48, 64, 48, 24, 24, 32, 16, 48].map(
+          [24, 36, 36, 32, 48, 24].map(
             (height, index) => (
               <div
                 key={index}

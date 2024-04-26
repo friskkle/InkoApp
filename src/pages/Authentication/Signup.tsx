@@ -37,8 +37,10 @@ export default function Start() {
             joindate: serverTimestamp(),
             jwlevel: 1,
             last_logged: serverTimestamp(),
+            lesson_num: 10,
             name: "new user",
             new: true,
+            quiz_num: 15,
             uid: uid,
             zhlast: "",
         });

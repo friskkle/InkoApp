@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider, useParams } from "react-router-dom"
 import PrivateRoute from './components/PrivateRoute';
 import AuthContext from './context/AuthContext';
-import {Home, Vocabulary, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, PostPage, SocialProfile, Following} from './pages/index'
+import {Home, Settings, Vocabulary, Quiz, Start, Signup, Signin, NewUser, JapaneseLearn, MandarinLearn, Profile, Hub, JPQuiz, Wallet, PostPage, SocialProfile, Following, ZHQuiz} from './pages/index'
 
 const App: React.FC = () => {
   const router = createBrowserRouter([
@@ -31,6 +31,10 @@ const App: React.FC = () => {
       element: <PrivateRoute><Profile/></PrivateRoute>
     },
     {
+      path:'/settings',
+      element:<PrivateRoute><Settings/></PrivateRoute>
+    },
+    {
       path:'/vocabulary',
       element:<PrivateRoute><Vocabulary/></PrivateRoute>
     },
@@ -47,8 +51,16 @@ const App: React.FC = () => {
       element:<PrivateRoute><Hub/></PrivateRoute>
     },
     {
+      path:'/quiz',
+      element:<PrivateRoute><Quiz/></PrivateRoute>
+    },
+    {
       path:'/jpquiz',
       element:<PrivateRoute><JPQuiz/></PrivateRoute>
+    },
+    {
+      path:'zhquiz',
+      element:<PrivateRoute><ZHQuiz/></PrivateRoute>
     },
     {
       path:'/wallet',

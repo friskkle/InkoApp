@@ -16,6 +16,7 @@ interface userExample {
     likeCount: number;
     timestamp: Timestamp;
     parentId: string;
+    mode: string;
 }
 
 interface userData {
@@ -31,11 +32,12 @@ const WordComment = (props: userExample) => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [deleteToast, setDeleteToast] = useState(false)
     const [likeCount, setLikeCount] = useState(0)
+    const [mode, setMode] = useState('japanese')
 
     const [userInfo, setUserInfo] = useState<userData>()
 
     const handleLike = async () => {
-        const postRef = collection(firestore, `japanese/${props.parentId}/userexamples`)
+        const postRef = collection(firestore, `${mode}/${props.parentId}/userexamples`)
         if (props.likes) {
           if (props.likes.includes(user.uid)) {
             await updateDoc(doc(postRef, props.docId), {
@@ -65,11 +67,12 @@ const WordComment = (props: userExample) => {
     }
 
     const handleDelete = async () => {
-        await deleteDoc(doc(firestore, `japanese/${props.parentId}/userexamples`, props.docId))
+        await deleteDoc(doc(firestore, `${mode}/${props.parentId}/userexamples`, props.docId))
         setDeleteToast(true)
     }
 
     useEffect(() => {
+        if(props.mode == 'ZH') setMode('mandarin')
         if(props.likes)
             setLikeCount(props.likes.length)
     }, [props.likes, likeCount])

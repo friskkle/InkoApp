@@ -92,6 +92,13 @@ const Home: React.FC = () => {
                   Vocabulary flashcards
                 </div>
               </a>
+              <a href="/quiz">
+                <div
+                  className="bg-green-100 hover:bg-green-200 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]"
+                  style={{height: `${'wallet'.length/1.4}rem`, width: `${'Vocabulary flashcards'.length/1.6}rem`}}>
+                  Quiz
+                </div>
+              </a>
               <a href="/social">
                 <div
                   className="bg-purple-100 hover:bg-purple-200 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]"

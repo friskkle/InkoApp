@@ -25,13 +25,15 @@ const MandarinWord: React.FC = () => {
     word: string;
     pinyin: string;
     level: string;
-    description: string[];
+    description: string;
+    descriptions: string[];
   }
 
   interface userData {
     uid: string;
     hsk: number;
     zhlast: string;
+    lesson_num: number;
   }
   
   const [fireWord, setFireWord] = useState<dbWord[]>([]);
@@ -50,15 +52,18 @@ const MandarinWord: React.FC = () => {
     setCurNum(curNum - 1)
   }
 
-  const getWords = async (level: number, lastWord: string) => {
-    const q = query(ref, orderBy("word"), where("level", "==", level || 1), where("word", ">", lastWord), limit(5));
+  const getWords = async (level: number, lastWord: string, num: number = 10) => {
+    const q = query(ref, orderBy("word"), where("level", "==", level.toString() || "1"), where("word", ">", lastWord), limit(num));
     const querySnapshot = await getDocs(q);
 
     let wordList: any[] = []
 
     if(!querySnapshot.empty){
       querySnapshot.forEach((doc) => {
-        wordList.push(doc.data())
+        const data = doc.data() as dbWord;
+        const meaningsArray = data.description.split(/(?=①|②|③|④|⑤|⑥|⑦|⑧|⑨)/)
+        data.descriptions = meaningsArray
+        wordList.push(data)
       })
       setMax(wordList.length)
       setCurNum(1)
@@ -73,7 +78,7 @@ const MandarinWord: React.FC = () => {
     if (userDoc.exists()) {
       const docData = userDoc.data() as userData;
       setUserInfo(docData);
-      getWords(docData.hsk, docData.zhlast || '');
+      getWords(docData.hsk, docData.zhlast || '', docData.lesson_num);
     } else {
       console.log("No user data found!");
     }

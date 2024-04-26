@@ -5,7 +5,8 @@ interface dbWord {
   word: string;
   pinyin: string;
   level: string;
-  description: string[];
+  description: string;
+  descriptions: string[]
 }
 
 type cardProps = {
@@ -73,6 +74,13 @@ export default function ZHCards(props: cardProps) {
                   {isFlipped[index] && (
                     <div>
                       <h2 className="font-bold text-lg">Level: {word.level}</h2>
+                      <ul>
+                        {word.descriptions.slice(0,4).map((meaning: any, index: any) => (
+                          <li key={index}>
+                            {meaning}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                   {/* <ul>

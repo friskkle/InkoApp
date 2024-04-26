@@ -153,9 +153,9 @@ const SocialProfile = () => {
     return (
         <div className="flex flex-col bg-indigo-100 min-h-screen select-none">
             <Header title="Profile" />
-            <div className="flex max-[768px]:flex-col max-[768px]:items-center mt-10 pb-10 select-text">
+            <div className="flex max-[768px]:flex-col max-[768px]:items-center pb-10 select-text">
                 <div className="min-[768px]:mr-auto"><Sidebar/></div>
-                <div className="bg-white rounded-md min-[768px]:mr-auto overflow-hidden max-[768px]:w-[90%] w-[60%] max-[426px]:w-2/3 transform transition-all duration-500">
+                <div className="bg-white rounded-md mt-10 min-[768px]:mr-auto overflow-hidden max-[768px]:w-[90%] w-[60%] max-[426px]:w-2/3 transform transition-all duration-500">
                     <div className="flex flex-col gap-0">
                         <div className="flex flex-col items-center max-[768px]:w-full py-10 text-center text-white font-bold bg-gradient-to-tr from-purple-400 to-purple-500">
                             <div className="relative w-[75px] h-[75px] cursor-pointer">

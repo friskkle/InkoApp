@@ -25,7 +25,7 @@ function Sidebar() {
     const navigate = useNavigate();
 
 	return (
-		<div className="sidebar sticky p-10">
+		<div className="sidebar h-full sticky p-10">
 			<div onClick={()=>{navigate(`/social/profile/${user.uid}`)}}><SidebarRow src={user.photoURL} title={user.displayName} /></div>
 			<div onClick={()=>{navigate(`/social`)}}><SidebarRow Icon={EmojiFlagsIcon} title="Topics" /></div>
 			<div onClick={()=>{navigate(`/social/${user.uid}/following`)}}><SidebarRow Icon={PeopleIcon} title="Following" /></div>

@@ -19,6 +19,7 @@ import WordComment from "./WordComment";
 interface propType {
     word: string;
     pronunciation: string;
+    mode: string;
     setPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -31,6 +32,14 @@ interface dbWord {
     pronunciation: string;
     type: string;
 }
+
+interface ZHWord {
+    word: string;
+    pinyin: string;
+    level: string;
+    description: string;
+    descriptions: string[];
+  }
 
 interface userExample {
     uid: string;
@@ -46,9 +55,10 @@ interface userExample {
 const ExpandedCard = (props: propType) => {
     const { user } = useContext(Context);
     const wordsRef = collection(firestore, "japanese");
+    const ZHWordsRef = collection(firestore, "mandarin");
     const pattern = /(\d+\.)|〔([^〕]+)〕|〈([^〉]+)〉/g; // expression to format the meanings
 
-    const [word, setWord] = useState<dbWord>();
+    const [word, setWord] = useState<any>();
     const [meanings, setMeanings] = useState("");
     const [wordId, setWordId] = useState("");
     const [input, setInput] = useState("");
@@ -84,12 +94,83 @@ const ExpandedCard = (props: propType) => {
                         return _match;
                     }
                 );
+                const japaneseMatch = meaningsString.match(/\b[A-Za-z][A-Za-z\s]+(?=;|\(|\!|\,|\.|\;|$)/)
+                if(japaneseMatch) {
+                    console.log(japaneseMatch[0])
+                }
                 setMeanings(formattedString);
 
                 // get the user submitted examples query
                 const exRef = collection(
                     firestore,
                     `japanese/${doc.id}/userexamples`
+                );
+                exQuery = query(
+                    exRef,
+                    orderBy("timestamp", "desc"),
+                    orderBy("likes_count", "desc")
+                );
+            });
+        }
+
+        // get user examples
+        const exSnapshot = await getDocs(exQuery);
+        if (!exSnapshot.empty) {
+            const exContainer: any = [];
+            exSnapshot.forEach((doc) => {
+                const data = doc.data() as userExample;
+                data.docId = doc.id;
+                exContainer.push({ id: doc.id, data: data });
+            });
+
+            setUserExamples(exContainer);
+        }
+    };
+
+    const getZHWordInfo = async () => {
+        const regex = /{[A-Za-z]}\s*(.+?)\n/;
+        // get the word from the database
+        const wordQuery = query(
+            ZHWordsRef,
+            where("word", "==", props.word),
+            limit(1)
+        );
+        const wordSnapshot = await getDocs(wordQuery);
+        let exQuery: any = ""; // set up the query to get user examples
+
+        if (!wordSnapshot.empty) {
+            wordSnapshot.forEach((doc) => {
+                const data = doc.data() as ZHWord;
+                const meaningsString = data.description
+
+                /* const mandarinIndex = meaningsString.indexOf('②');
+
+                const mandarinMatch = meaningsString.match(/^[^\u4e00-\u9fa5]+/);
+                if(mandarinMatch){
+                    if(mandarinIndex > 0 && mandarinIndex < mandarinMatch[0].length){
+                        const parsedDefinition = meaningsString.slice(0, mandarinIndex);
+                        // If the definition contains '①' or an apostrophe, remove it
+                        const finalDefinition = parsedDefinition.replace(/[①'"]/g, '');
+                        setMeanings(finalDefinition);
+                    }
+                    else {
+                        const finalDefinition = mandarinMatch[0].replace(/[①'"]/g, '');
+                        setMeanings(finalDefinition)
+                    }
+                }
+                else {
+                    const finalDefinition = meaningsString.replace(/[①'"]/g, '');
+                    setMeanings(finalDefinition)
+                } */
+                setMeanings(meaningsString)
+                setWord(data);
+                setWordId(doc.id);
+                
+
+                // get the user submitted examples query
+                const exRef = collection(
+                    firestore,
+                    `mandarin/${doc.id}/userexamples`
                 );
                 exQuery = query(
                     exRef,
@@ -120,7 +201,18 @@ const ExpandedCard = (props: propType) => {
             return;
         }
         e.preventDefault();
+        if(props.mode == 'JP') 
         await addDoc(collection(firestore, `japanese/${wordId}/userexamples`), {
+            uid: user.uid,
+            photoUrl: user.photoURL,
+            example: input,
+            meaning: english,
+            likes: [],
+            likes_count: 0,
+            timestamp: serverTimestamp(),
+        });
+        else
+        await addDoc(collection(firestore, `mandarin/${wordId}/userexamples`), {
             uid: user.uid,
             photoUrl: user.photoURL,
             example: input,
@@ -135,7 +227,8 @@ const ExpandedCard = (props: propType) => {
     };
 
     useEffect(() => {
-        getWordInfo();
+        if (props.mode == 'JP') getWordInfo();
+        else getZHWordInfo();
     }, [change]);
     return (
         <div
@@ -150,6 +243,7 @@ const ExpandedCard = (props: propType) => {
                 }}
                 className="messageSender__top bg-white fixed w-2/3 h-fit max-h-full overflow-y-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-10 z-10 rounded-2xl text-center text-xl select-text"
             >
+                {props.mode == 'ZH' && <h1 className="text-3xl">{word?.pinyin}</h1>}
                 <h1 className="font-bold text-5xl">{props.word}</h1>
                 <p className="mt-2">
                     {meanings
@@ -164,14 +258,14 @@ const ExpandedCard = (props: propType) => {
                             );
                         })}
                 </p>
-                <ul className="mt-5">
+                {props.mode == 'JP' && (<ul className="mt-5">
                     <p className="font-bold">Examples</p>
                     {word?.example_sentences
                         ?.slice(0, 4)
                         .map((sense: any, index: number) => (
                             <li key={index}>"{sense}"</li>
                         ))}
-                </ul>
+                </ul>)}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -226,7 +320,8 @@ const ExpandedCard = (props: propType) => {
                             likes={example.data.likes}
                             likeCount={example.data.likeCount}
                             timestamp={example.data.timestamp}
-                            parentId={wordId}/>
+                            parentId={wordId}
+                            mode={props.mode}/>
                         )
                     )}
                 </div>
