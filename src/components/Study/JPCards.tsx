@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {ArrowBigLeft, ArrowBigRight, CircleDot, Circle} from "lucide-react"
 import { Timestamp } from 'firebase/firestore';
 import WordComment from '../Wallet/WordComment';
@@ -36,7 +36,6 @@ export default function JPCards(props: cardProps) {
     const [curIndex, setCurIndex] = useState(0);
     const [curNum, setCurNum] = useState(1);
     const [isFlipped, setisFlipped] = useState<Array<boolean>>(Array(props.words.length).fill(false))
-    const communityExamples: any = props.userExamples
 
     function ShowPrevImg() {
         setCurIndex(index => {
@@ -65,6 +64,10 @@ export default function JPCards(props: cardProps) {
         }))
     }
 
+    useEffect(() => {
+        console.log(props.userExamples)
+    }, [])
+
     return(
         <div className="w-[100%] h-[100%] relative z-0 flex">
             <button onClick={ShowPrevImg} className="img-slider-btn">
@@ -92,8 +95,8 @@ export default function JPCards(props: cardProps) {
                             <li key={index}>"{sense}"</li>
                         ))}
                         </ul>
-                        <div>
-                        {communityExamples.map(
+                        {/* <div>
+                            {props.userExamples.map(
                         (example: {
                             id: React.Key | null | undefined;
                             data: {
@@ -106,22 +109,22 @@ export default function JPCards(props: cardProps) {
                                 likeCount: number;
                                 timestamp: Timestamp;
                             };
-                            }) => (
-                                <WordComment 
-                                key={example.id}
-                                uid= {example.data.uid}
-                                docId={example.data.docId}
-                                photoUrl={example.data.photoUrl}
-                                example={example.data.example}
-                                meaning={example.data.meaning}
-                                likes={example.data.likes}
-                                likeCount={example.data.likeCount}
-                                timestamp={example.data.timestamp}
-                                parentId={word.wordId}
-                                mode='JP'/>
-                            )
-                        )}
-                        </div>
+                        }) => (
+                            <WordComment 
+                            key={example.id}
+                            uid= {example.data.uid}
+                            docId={example.data.docId}
+                            photoUrl={example.data.photoUrl}
+                            example={example.data.example}
+                            meaning={example.data.meaning}
+                            likes={example.data.likes}
+                            likeCount={example.data.likeCount}
+                            timestamp={example.data.timestamp}
+                            parentId={wordId}
+                            mode="JP"/>
+                        )
+                    )}
+                        </div> */}
                     </div>}
                   </div>
                 ) : (

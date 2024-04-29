@@ -12,6 +12,7 @@ interface walletWord {
     freq: number;
     last_studied: Timestamp;
     mastery: number;
+    pronunciation: string;
 }
 
 interface userData {
@@ -19,6 +20,7 @@ interface userData {
     exp: number;
     level: number;
     uid: string;
+    quiz_num: number;
   }
 
 export default function JPQuiz() {
@@ -42,21 +44,26 @@ export default function JPQuiz() {
         if (userDoc.exists()) {
           const docData = userDoc.data() as userData;
           setUserInfo(docData);
+          getWords(user.uid, docData.quiz_num);
         } else {
           console.log("No user data found!");
         }
       };
 
-    const getWords = async (uid: string) => {
+    const getWords = async (uid: string, num: number = 20) => {
         const userRef = collection(firestore, `users/${uid}/JPwallet`)
-        const q = query(userRef, orderBy("mastery"), orderBy("last_studied"), limit(20))
+        const q = query(userRef, orderBy("mastery"), orderBy("last_studied"), limit(num))
         const querySnapshot = await getDocs(q)
 
         let wordList: any[] = [];
 
         if(!querySnapshot.empty){
             querySnapshot.forEach((doc) => {
-                wordList.push(doc.data());
+                const data = doc.data() as walletWord;
+                const match = doc.id.match(/([\p{L}\p{N}]+)\s*\(([\p{L}\p{N}]+)\)/u);
+                if(match)
+                  data.pronunciation = match[2];
+                wordList.push(data);
             })
         }
 
@@ -64,7 +71,6 @@ export default function JPQuiz() {
     }
 
     useEffect(() => {
-        getWords(user.uid)
         getUserInfo(user.uid)
     }, []);
     
@@ -76,7 +82,7 @@ export default function JPQuiz() {
         <div className='mt-5 w-full flex justify-center'>
             {userWords.length > 0 ? (<JPQuizCards words={userWords} uid={user.uid} setDone={setDone} setScore={setScore} setExp={setExp}/>) : <CircularProgress />}
         </div>
-        {userInfo && done && <QuizDone score={score} curExp={userInfo.exp} exp={exp} level={0.5 * Math.floor(Math.sqrt(userInfo.exp))}/>}
+        {userInfo && done && <QuizDone score={score} curExp={userInfo.exp} exp={exp}/>}
     </div>
   )
 }

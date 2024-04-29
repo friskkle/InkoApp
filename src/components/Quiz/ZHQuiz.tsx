@@ -88,10 +88,10 @@ const ZHQuizCards = (props: cardProps) => {
       }
 
     const getRandomMeanings = async (word: string, meaning: string) => {
-        const randomQuery = query(meaningRef, where("meaning", ">", meaning), limit(3))
+        const randomQuery = query(meaningRef, where("meaning", ">", meaning), limit(10))
         const randomSnapshot = await getDocs(randomQuery);
 
-        const meaningList = [meaning]
+        let meaningList: any = []
 
         if(!randomSnapshot.empty){
             randomSnapshot.forEach((doc) => {
@@ -99,8 +99,14 @@ const ZHQuizCards = (props: cardProps) => {
                 meaningList.push(data.meaning)
             })
         }
-        shuffle(meaningList)
-        setChoices(meaningList)
+
+        //remove duplicate meanings first
+        meaningList = meaningList.filter((value: any, index: any, self: any) => self.indexOf(value) === index);
+
+        const choicesList = meaningList.slice(0,3);
+        choicesList.push(meaning)
+        shuffle(choicesList);
+        setChoices(choicesList);
     }
 
     const getWord = async (word: string) => {
@@ -112,6 +118,7 @@ const ZHQuizCards = (props: cardProps) => {
                 const data = doc.data() as quizWord;
                 const meaningsString = data.description
 
+                // extracting the first meaning for the correct multiple choice answer
                 const mandarinIndex = meaningsString.indexOf('②');
 
                 const mandarinMatch = meaningsString.match(/^[^\u4e00-\u9fa5]+/);
@@ -156,6 +163,7 @@ const ZHQuizCards = (props: cardProps) => {
                     props.setExp(expGained)
                     props.setScore(finalScore)
                 }
+                props.setDone(true)
             }
         }
         else {

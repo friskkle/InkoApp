@@ -14,6 +14,7 @@ import {
   setDoc,
   serverTimestamp,
   Timestamp,
+  addDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import JPCards from "./JPCards";
@@ -32,7 +33,9 @@ interface dbWord {
 
 interface userData {
   name: string;
+  daily: boolean;
   exp: number;
+  level: number;
   uid: string;
   hsk: number;
   jlpt: number;
@@ -95,39 +98,40 @@ const JapaneseWord = (props: any) => {
     let exQuery: any = "";
 
     let wordList: any[] = [];
+    let exampleList: any[] = [];
 
     if (!querySnapshot.empty) {
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as dbWord;
-        data.wordId = doc.id
-        wordList.push(data);
+      querySnapshot.forEach(async (doc) => {
+        const wordsData = doc.data() as dbWord;
+        wordsData.wordId = doc.id;
+        wordList.push(wordsData);
         // get the user submitted examples query
         const exRef = collection(
           firestore,
           `japanese/${doc.id}/userexamples`
         );
         exQuery = query(
-            exRef,
-            orderBy("timestamp", "desc"),
+          exRef,
             orderBy("likes_count", "desc")
-        );
-      });
-      setMax(wordList.length);
-      setCurNum(1);
-      setLastIndex(wordList[wordList.length-1].freq)
-
-      // get user examples
-      const exSnapshot = await getDocs(exQuery);
-      if (!exSnapshot.empty) {
-          const exContainer: any = [];
-          exSnapshot.forEach((doc) => {
+          );
+          
+          // get user examples
+          const exSnapshot = await getDocs(exQuery);
+          if (!exSnapshot.empty) {
+            const exContainer: any = [];
+            exSnapshot.forEach((doc) => {
               const data = doc.data() as userExample;
               data.docId = doc.id;
               exContainer.push({ id: doc.id, data: data });
-          });
-
-          setUserExamples(exContainer);
+            }
+          );
+          exampleList.push(exContainer)
       }
+      });
+      setMax(wordList.length);
+      setCurNum(1);
+      setLastIndex(wordList[wordList.length-1].freq);
+      setUserExamples(exampleList)
     }
 
     setFireWord(wordList);
@@ -145,12 +149,35 @@ const JapaneseWord = (props: any) => {
     }
   };
 
+  const levelThreshold = (curLevel: number) => {
+    return Math.floor(Math.pow(2, curLevel/0.45));
+  }
+
   // save the studied words into the wallet, update the last word studied for the user, and open a quiz
   const goToQuiz = async (e: any) => {
     if(userInfo){
+      let exp = 10
+      let level = userInfo.level
+      if(!userInfo.daily) exp += 10
+      if (userInfo.exp + exp >= levelThreshold(userInfo.level)){
+        level = Math.floor(Math.sqrt((userInfo.exp + exp)*0.2025))
+        await addDoc(collection(firestore, "posts"), {
+          title: "Level Up!",
+          message: `${userInfo.name} has just leveled up to level ${level}!`,
+          timestamp: serverTimestamp(),
+          profilePic: '',
+          username: 'Inko',
+          url: "",
+          img: "",
+          uid: 'inkobaseuid',
+          likes: [],
+        });
+      }
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
         jwlevel: lastIndex,
-        exp: userInfo.exp + 5
+        exp: userInfo.exp + exp,
+        daily: true,
+        level: level
       })
       fireWord.forEach(async (word) => {
         const wordTitle = word.word + "(" + word.pronunciation + ")"

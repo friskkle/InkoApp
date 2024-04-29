@@ -17,7 +17,7 @@ export default function AuthContext({children}) {
         const docRef = doc(userRef, uid);
         const userDoc = await getDoc(docRef);
 
-        if(userDoc.last_logged){
+        if(userDoc.exists()){
             const docData = userDoc.data()
             const last = docData.last_logged.toDate()
             last.setHours(0, 0, 0, 0)

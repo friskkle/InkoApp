@@ -12,6 +12,7 @@ import {
   updateDoc,
   setDoc,
   serverTimestamp,
+  addDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import ZHCards from './ZHCards';
@@ -31,6 +32,10 @@ const MandarinWord: React.FC = () => {
 
   interface userData {
     uid: string;
+    name: string;
+    level: number;
+    exp: number;
+    daily: boolean;
     hsk: number;
     zhlast: string;
     lesson_num: number;
@@ -84,10 +89,34 @@ const MandarinWord: React.FC = () => {
     }
   };
 
+  const levelThreshold = (curLevel: number) => {
+    return Math.floor(Math.pow(2, curLevel/0.45));
+  }
+
   const goToQuiz = async (e: any) => {
     if(userInfo){
+      let exp = 10
+      let level = userInfo.level
+      if(!userInfo.daily) exp += 10
+      if (userInfo.exp + exp >= levelThreshold(userInfo.level)){
+        level = Math.floor(Math.sqrt((userInfo.exp + exp)*0.2025))
+        await addDoc(collection(firestore, "posts"), {
+          title: "Level Up!",
+          message: `${userInfo.name} has just leveled up to level ${level}!`,
+          timestamp: serverTimestamp(),
+          profilePic: '',
+          username: 'Inko',
+          url: "",
+          img: "",
+          uid: 'inkobaseuid',
+          likes: [],
+        });
+      }
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
-        zhlast: lastIndex
+        zhlast: lastIndex,
+        exp: userInfo.exp + exp,
+        daily: true,
+        level: level
       })
       fireWord.forEach(async (word) => {
         const wordTitle = word.word
@@ -98,7 +127,7 @@ const MandarinWord: React.FC = () => {
           last_studied: serverTimestamp()
         })
       })
-      navigate('/home')
+      navigate('/zhquiz')
     }
     else{
       console.log("User info not loaded, cannot open quiz")

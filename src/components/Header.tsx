@@ -30,11 +30,11 @@ function Header(props: {title: string}) {
   };
 
   return (
-    <div className="Header bg-white p-6 font-semibold shadow-sm relative flex justify-between items-center">
-      <span className="w-auto cursor-pointer bg-indigo-100 hover:bg-indigo-200 p-2 rounded-xl font-bold hover:shadow-sm transition duration-150" onClick={() => navigate('/home')}>INKO</span>
+    <div className="Header bg-white p-4 font-semibold shadow-sm relative flex justify-between items-center">
+      <span className="w-auto cursor-pointer from-indigo-100 to-indigo-100 bg-gradient-to-r hover:from-indigo-200 hover:to-indigo-400 p-2 rounded-xl font-bold hover:shadow-sm transition duration-500" onClick={() => navigate('/home')}>INKO</span>
       <div className="absolute right-0 left-0 justify-self-center">{props.title}</div>
       <span
-        className="w-auto flex items-center justify-center gap-1"
+        className="w-auto flex p-1 rounded-xl items-center justify-center gap-1 hover:bg-slate-50"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

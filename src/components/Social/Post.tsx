@@ -128,7 +128,7 @@ function Post(props: postData) {
         </div>}
       </div>
       <h1 className="pl-10 text-2xl font-semibold">{props.title}</h1>
-      <div className="post__bottom mt-1 mb-3 pl-10 pt-6 select-text text-lg cursor-default">
+      <div className="post__bottom mt-1 mb-3 px-10 pt-6 select-text text-lg cursor-default">
         <p onClick={(e) => {e.stopPropagation()}}>{props.message}</p>
         {props.url && <div className="text-blue-600 underline">
           <a href={props.url} target="_blank">Open link</a>

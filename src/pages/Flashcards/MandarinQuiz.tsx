@@ -78,7 +78,7 @@ export default function ZHQuiz() {
         <div className='mt-5 w-full flex justify-center'>
             {userWords.length > 0 ? (<ZHQuizCards words={userWords} uid={user.uid} setDone={setDone} setScore={setScore} setExp={setExp}/>) : <CircularProgress />}
         </div>
-        {userInfo && done && <QuizDone score={score} curExp={userInfo.exp} exp={exp} level={0.5 * Math.floor(Math.sqrt(userInfo.exp))}/>}
+        {userInfo && done && <QuizDone score={score} curExp={userInfo.exp} exp={exp}/>}
     </div>
   )
 }

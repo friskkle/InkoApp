@@ -63,7 +63,7 @@ const Wallet = () => {
   }, [mode]);
 
   return (
-    <div className="flex flex-col bg-indigo-100 min-h-screen select-none relative">
+    <div className="flex flex-col bg-gradient-to-b from-indigo-100 to-indigo-200 min-h-screen select-none relative">
       <Header title="Wallet" />
       <div className="flex flex-col p-8 items-center">
         <div className="flex flex-auto p-2 gap-2 bg-indigo-200 rounded-xl">
