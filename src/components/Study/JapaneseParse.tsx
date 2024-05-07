@@ -19,6 +19,7 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import JPCards from "./JPCards";
 import { useNavigate } from "react-router-dom";
+import Levelup from "../LevelupHandle";
 
 interface dbWord {
   word: string;
@@ -149,30 +150,13 @@ const JapaneseWord = (props: any) => {
     }
   };
 
-  const levelThreshold = (curLevel: number) => {
-    return Math.floor(Math.pow(2, curLevel/0.45));
-  }
-
   // save the studied words into the wallet, update the last word studied for the user, and open a quiz
   const goToQuiz = async (e: any) => {
     if(userInfo){
       let exp = 10
-      let level = userInfo.level
       if(!userInfo.daily) exp += 10
-      if (userInfo.exp + exp >= levelThreshold(userInfo.level)){
-        level = Math.floor(Math.sqrt((userInfo.exp + exp)*0.2025))
-        await addDoc(collection(firestore, "posts"), {
-          title: "Level Up!",
-          message: `${userInfo.name} has just leveled up to level ${level}!`,
-          timestamp: serverTimestamp(),
-          profilePic: '',
-          username: 'Inko',
-          url: "",
-          img: "",
-          uid: 'inkobaseuid',
-          likes: [],
-        });
-      }
+      let level = await Levelup(userInfo.uid, userInfo.name, userInfo.level, userInfo.exp)
+      
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
         jwlevel: lastIndex,
         exp: userInfo.exp + exp,

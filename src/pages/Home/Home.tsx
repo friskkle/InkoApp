@@ -44,6 +44,7 @@ const Home: React.FC = () => {
   const [userInfo, setUserInfo] = useState<userData>();
   const [daily, setDaily] = useState("Available");
   const [dailyQuiz, setDailyQuiz] = useState("Available");
+  const [unlocked, setUnlocked] = useState(false)
 
   const usersRef = collection(firestore, 'users');
   const ref = collection(firestore, "posts");
@@ -75,6 +76,8 @@ const Home: React.FC = () => {
         setDaily("Completed!")
       if(docData.dailyquiz === true)
         setDailyQuiz("Completed!")
+      if(docData.level >= 5)
+        setUnlocked(true)
     }
     else {
       console.log("No user data found!")
@@ -145,12 +148,12 @@ const Home: React.FC = () => {
                   Quiz
                 </div>
               </a>
-              <a href="/social">
+              {unlocked && <a href="/social">
                 <div
                   className="bg-purple-100 hover:bg-[#BD9DDE] rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]">
                   Social Hub
                 </div>
-              </a>
+              </a>}
               <a href="/wallet">
                 <div
                   className="bg-green-100 hover:bg-green-200 rounded-xl p-4 mb-4 text-black leading-10 m-2 text-4xl max-[768px]:text-3xl transition ease-[0.2s]">
@@ -168,7 +171,7 @@ const Home: React.FC = () => {
         </div>
         <div className="stats flex flex-1 flex-col gap-[15px]">
           <h1 className="text-5xl font-bold p-5 bg-white rounded-xl shadow-md">Recent Posts</h1>
-          <div className="statblocks block">
+          {unlocked ? (<div className="statblocks block">
           {posts.map(
                 (post: {
                     id: React.Key | null | undefined;
@@ -201,7 +204,11 @@ const Home: React.FC = () => {
                     />
                 )
             )}
-          </div>
+          </div>) : (
+            <div className="bg-white rounded-xl p-5">
+              Reach level 5 to unlock the social features!
+            </div>
+          )}
         </div>
       </div>
     </div>

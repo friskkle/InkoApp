@@ -7,6 +7,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -24,6 +25,7 @@ import { Context } from "../../context/AuthContext";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import Header from "../../components/Header";
+import Badge from "../../components/Badge";
 
 interface userData {
   name: string;
@@ -36,9 +38,16 @@ interface userData {
   hsk: number;
   jlpt: number;
   joindate: Timestamp;
+  level: number;
   new: boolean;
   jwlevel: number;
   zhlast: string;
+}
+
+interface achievementData {
+  description: string;
+  obtained: Timestamp;
+  type: string;
 }
 
 function Profile() {
@@ -48,6 +57,7 @@ function Profile() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const [userInfo, setUserInfo] = useState<userData>();
+  const [achievements, setAchievements] = useState<any>([]);
   const [bio, setBio] = useState("No bio set yet");
   const [isHovered, setIsHovered] = useState(false);
   const [file, setFile] = useState<any>("");
@@ -57,8 +67,24 @@ function Profile() {
   const [infoToast, setInfoToast] = useState(false);
   const [nameEmpty, setNameEmpty] = useState(false);
   const [change, setChange] = useState(false);
+  const [threshold, setThreshold] = useState(0);
 
   const usersRef = collection(firestore, "users");
+  const badgeRef = collection(firestore, `users/${user.uid}/achievements`)
+
+  const getAchievements = async () => {
+    const docs = await getDocs(badgeRef);
+    if(!docs.empty){
+      const docList: any = []
+      docs.docs.forEach((doc) => {
+        let data = doc.data();
+        const badgeId = doc.id;
+        docList.push({id: badgeId, data: data})
+      })
+
+      setAchievements(docList);
+    }
+  }
 
   const getUserInfo = async (uid: string) => {
     const docRef = doc(usersRef, uid);
@@ -69,10 +95,15 @@ function Profile() {
       setUserInfo(docData);
       if (docData.bio) setBio(docData.bio);
       if (docData.name) setNewName(docData.name)
+      if (docData.exp) setThreshold(levelThreshold(docData.level + 1))
     } else {
       console.log("No user data found!");
     }
   };
+  
+  const levelThreshold = (curLevel: number) => {
+      return Math.floor(Math.pow(curLevel/0.5, 1.8));
+  }
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -161,6 +192,7 @@ function Profile() {
       if (user) {
         const uid = user.uid;
         getUserInfo(uid);
+        getAchievements();
       } else {
         console.log("user is logged out");
       }
@@ -209,7 +241,8 @@ function Profile() {
                   <p className="text-xl">{userInfo?.name}</p>
                 )}
                 <p>@{user.displayName}</p>
-                <p>{userInfo?.exp} exp</p>
+                <p>Level {userInfo?.level}</p>
+                <p>{userInfo?.exp}/{threshold} exp</p>
                 <p className="mt-2">JLPT N{userInfo?.jlpt}</p>
                 <p>HSK {userInfo?.hsk}</p>
                 {edit ? (
@@ -276,6 +309,25 @@ function Profile() {
                 Social Page
               </Button>}
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="achievements flex items-center justify-center">
+        <div className="flex flex-col w-1/2 bg-white rounded-xl p-7">
+          <h1 className="font-bold text-xl">Achievements</h1>
+          <div className="w-full mt-5">
+            {achievements.map((badge: {
+              id: React.Key | undefined | null;
+              data: {
+                description: string;
+                obtained: Timestamp;
+                type: string;
+              }
+            }) => (
+              <div key={badge.id}>
+                <Badge description={badge.data.description} obtained={badge.data.obtained} type={badge.data.type}/>
+              </div>
+            ))}
           </div>
         </div>
       </div>

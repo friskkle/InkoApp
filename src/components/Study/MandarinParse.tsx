@@ -17,6 +17,7 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import ZHCards from './ZHCards';
 import { useNavigate } from 'react-router-dom';
+import Levelup from '../LevelupHandle';
 
 const MandarinWord: React.FC = () => {
   const ref = collection(firestore, "mandarin");
@@ -90,28 +91,15 @@ const MandarinWord: React.FC = () => {
   };
 
   const levelThreshold = (curLevel: number) => {
-    return Math.floor(Math.pow(2, curLevel/0.45));
+    return Math.floor(Math.pow(curLevel/0.5, 1.8));
   }
 
   const goToQuiz = async (e: any) => {
     if(userInfo){
       let exp = 10
-      let level = userInfo.level
       if(!userInfo.daily) exp += 10
-      if (userInfo.exp + exp >= levelThreshold(userInfo.level)){
-        level = Math.floor(Math.sqrt((userInfo.exp + exp)*0.2025))
-        await addDoc(collection(firestore, "posts"), {
-          title: "Level Up!",
-          message: `${userInfo.name} has just leveled up to level ${level}!`,
-          timestamp: serverTimestamp(),
-          profilePic: '',
-          username: 'Inko',
-          url: "",
-          img: "",
-          uid: 'inkobaseuid',
-          likes: [],
-        });
-      }
+      let level = await Levelup(userInfo.uid, userInfo.name, userInfo.level, userInfo.exp + exp)
+      
       await updateDoc(doc(firestore, 'users', userInfo.uid), {
         zhlast: lastIndex,
         exp: userInfo.exp + exp,

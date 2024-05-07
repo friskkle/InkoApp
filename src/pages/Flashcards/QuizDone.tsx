@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { firestore } from "../../firebase";
 import { Context } from "../../context/AuthContext";
 import { userInfo } from "os";
+import Levelup from "../../components/LevelupHandle";
 
 interface Stats {
     score: number;
@@ -29,7 +30,7 @@ const QuizDone = (props: Stats) => {
     const usersRef = collection(firestore, 'users');
 
     const levelThreshold = (curLevel: number) => {
-        return Math.floor(Math.pow(2, curLevel/0.45));
+        return Math.floor(Math.pow(curLevel/0.5, 1.8));
     }
 
     const getUserInfo = async (uid: string) => {
@@ -40,23 +41,8 @@ const QuizDone = (props: Stats) => {
         if(docData.dailyquiz === false){
             setDaily(true);
             setBonus(10);
-            let lev = docData.level;
+            let lev = await Levelup(user.uid, docData.name, docData.level, props.curExp + props.exp + 10)
             setLevel(lev);
-            if (docData.exp >= levelThreshold(lev)){
-                lev = Math.floor(Math.sqrt((props.curExp + props.exp + 10)*0.2025))
-                setLevel(lev);
-                await addDoc(collection(firestore, "posts"), {
-                    title: "Level Up!",
-                    message: `${docData.name} has just leveled up to level ${lev}!`,
-                    timestamp: serverTimestamp(),
-                    profilePic: '',
-                    username: 'Inko',
-                    url: "",
-                    img: "",
-                    uid: 'inkobaseuid',
-                    likes: [],
-                  });
-            }
             await updateDoc(docRef, {
                 dailyquiz: true,
                 exp: props.curExp + props.exp + 10,
@@ -64,23 +50,8 @@ const QuizDone = (props: Stats) => {
             })
             }
         else {
-            let lev = docData.level;
+            let lev = await Levelup(user.uid, docData.name, docData.level, props.curExp+props.exp)
             setLevel(lev)
-            if (docData.exp >= levelThreshold(lev)){
-                lev = Math.floor(Math.sqrt((props.curExp + props.exp)*0.2025))
-                setLevel(lev);
-                await addDoc(collection(firestore, "posts"), {
-                    title: "Level Up!",
-                    message: `${docData.name} has just leveled up to level ${lev}!`,
-                    timestamp: serverTimestamp(),
-                    profilePic: '',
-                    username: 'Inko',
-                    url: "",
-                    img: "",
-                    uid: 'inkobaseuid',
-                    likes: [],
-                  });
-            }
             await updateDoc(docRef, {
                 dailyquiz: true,
                 exp: props.curExp + props.exp,

@@ -125,7 +125,7 @@ const JPQuizCards = (props: cardProps) => {
         const randomQuery = query(
             meaningRef,
             where("meaning", ">", meaning),
-            limit(10)
+            limit(20)
         );
         const randomSnapshot = await getDocs(randomQuery);
 
@@ -139,14 +139,18 @@ const JPQuizCards = (props: cardProps) => {
         }
 
         //remove duplicate meanings first
-        meaningList = meaningList.filter(
-            (value: any, index: any, self: any) => self.indexOf(value) === index
-        );
+        let uniqueSet = new Set();
+        meaningList.forEach((str: any) => {
+            uniqueSet.add(str.trim());
+        })
+        uniqueSet.forEach((str: any) => {
+            if (str === meaning) uniqueSet.delete(str);
+        })
+        let newList: any = Array.from(uniqueSet);
 
-        const choicesList = meaningList.slice(0, 3);
+        const choicesList = newList.slice(0, 3);
         choicesList.push(meaning);
         shuffle(choicesList);
-        console.log(choicesList);
         setChoices(choicesList);
     };
 
