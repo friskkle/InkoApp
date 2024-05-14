@@ -109,7 +109,7 @@ export default function NewUser() {
   return (
     <main>        
         <section>
-        <div className='main-container bg-gray-200 flex flex-col h-screen w-screen p-6'>
+        <div className='main-container bg-gradient-to-b from-[#c7d2fe65] to-indigo-200 flex flex-col h-screen w-screen p-6'>
                 <div className='self-center top-[20%] absolute border-t-8 rounded-sm border-indigo-600 bg-white p-12 shadow-2xl w-96'>                  
                     <h1 className='font-bold text-center block text-2xl'> Enter Your Information </h1>
                     <form>

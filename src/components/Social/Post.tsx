@@ -150,11 +150,6 @@ function Post(props: postData) {
             <p className="ml-[10px]">{commentCount}</p>
           </div>
         </Link>}
-
-        <div className="post__option flex items-center justify-center p-2 flex-1 hover:bg-[#eff2f5] rounded-xl transition duration-150">
-          <NearMeIcon/>
-          <p className="ml-[10px]">Share</p>
-        </div>
       </div>
       <Dialog
         open={showConfirmationModal}

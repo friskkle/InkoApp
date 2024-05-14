@@ -35,7 +35,7 @@ export default function Signin() {
     return (
         <main>        
         <section>
-            <div className='main-container bg-gray-200 flex flex-col h-screen w-screen p-6'>
+            <div className='main-container bg-gradient-to-b from-[#c7d2fe65] to-indigo-200 flex flex-col h-screen w-screen p-6'>
                 <button onClick={goHome} className='back-button w-20 p-2 transition-all inline-block text-black font-bold rounded cursor-pointer bg-gradient-to-r from-slate-50 to-slate-100 hover:text-white hover:from-slate-400 hover:to-slate-500 focus:bg-indigo-900 transform hover:-translate-y-0 hover:shadow-lg'>
                     Return
                 </button>

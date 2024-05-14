@@ -51,7 +51,7 @@ interface achievementData {
 }
 
 function Profile() {
-  const { user } = useContext(Context);
+  const { user, level } = useContext(Context);
   const navigate = useNavigate();
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -305,7 +305,7 @@ function Profile() {
                   )}
                 </div>
               </div>
-              {!edit &&<Button variant="contained" onClick={toSocialProfile}>
+              {!edit && level >= 5 && <Button variant="contained" onClick={toSocialProfile}>
                 Social Page
               </Button>}
             </div>

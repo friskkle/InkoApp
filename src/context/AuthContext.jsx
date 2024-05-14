@@ -3,12 +3,14 @@ import { auth, firestore } from "../firebase";
 import React from 'react'
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, serverTimestamp, updateDoc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 // Provides context for protected routes
 
 export const Context = createContext();
 
 export default function AuthContext({children}) {
     const [currentUser, setCurrentUser] = useState(null)
+    const [currentLevel, setCurrentLevel] = useState(0)
     const [loading, setLoading] = useState(true)
 
     const userRef = collection(firestore, "users")
@@ -17,8 +19,9 @@ export default function AuthContext({children}) {
         const docRef = doc(userRef, uid);
         const userDoc = await getDoc(docRef);
 
-        if(userDoc.exists()){
+        if(userDoc.exists() && userDoc.data().new === false){
             const docData = userDoc.data()
+            setCurrentLevel(docData.level)
             const last = docData.last_logged.toDate()
             last.setHours(0, 0, 0, 0)
 
@@ -37,12 +40,15 @@ export default function AuthContext({children}) {
                         last_logged: serverTimestamp()
                     })
         }
-        else
+        else{
+            const docData = userDoc.data()
+            setCurrentLevel(docData.level)
             await updateDoc(doc(firestore, "users", uid), {
                 last_logged: serverTimestamp(),
                 daily: false,
                 dailyquiz: false
             })
+        }
     }
 
     useEffect(() => {
@@ -61,7 +67,9 @@ export default function AuthContext({children}) {
 
     const values = {
         user: currentUser,
-        setCurrentUser: setCurrentUser
+        level: currentLevel,
+        setCurrentUser: setCurrentUser,
+        setCurrentLevel: setCurrentLevel
     }
 
     return <Context.Provider value={values}>
