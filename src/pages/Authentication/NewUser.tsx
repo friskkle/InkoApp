@@ -43,6 +43,7 @@ export default function NewUser() {
         }
       }
 
+    // set initial data with the ones the user has set
     const setData = async () => {
         if (auth.currentUser){
             updateProfile(auth.currentUser, {

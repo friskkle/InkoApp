@@ -95,9 +95,6 @@ const ExpandedCard = (props: propType) => {
                     }
                 );
                 const japaneseMatch = meaningsString.match(/\b[A-Za-z][A-Za-z\s]+(?=;|\(|\!|\,|\.|\;|$)/)
-                if(japaneseMatch) {
-                    console.log(japaneseMatch[0])
-                }
                 setMeanings(formattedString);
 
                 // get the user submitted examples query
